@@ -1,1 +1,39 @@
-__PLACEHOLDER__
+# terraform.tfvars.example — NexCloud TCC
+# Copie para terraform.tfvars e ajuste os valores.
+# NÃO commitar terraform.tfvars com valores reais de produção.
+
+aws_region   = "sa-east-1"
+project_name = "escolatech"
+environment  = "tcc"
+
+# Substitua pelo seu domínio registrado.
+# Se não tiver domínio, use o cloudfront_domain_name do output.
+domain_name = "escolatech.com.br"
+
+# E-mail que receberá alertas do CloudWatch via SNS.
+# Confirme a assinatura no e-mail após o terraform apply.
+alert_email = "seu-email@exemplo.com"
+
+# VPC
+vpc_cidr             = "10.0.0.0/16"
+availability_zones   = ["sa-east-1a", "sa-east-1b"]
+public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
+
+# NAT Gateway — true = habilita (obrigatório para EC2 acessarem internet)
+enable_nat_gateway = true
+# false = 1 NAT por AZ (HA), true = 1 NAT total (menor custo)
+single_nat_gateway = false
+
+# EC2
+instance_type  = "t3.small"
+ebs_volume_size = 20
+
+# ASG — min >= 2 para garantir Multi-AZ
+asg_min_size         = 2
+asg_desired_capacity = 2
+asg_max_size         = 4
+asg_cpu_target       = 70
+
+# CloudFront
+cloudfront_price_class = "PriceClass_All"
