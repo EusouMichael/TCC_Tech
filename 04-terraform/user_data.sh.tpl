@@ -14,6 +14,7 @@
 #   assets_bucket — nome do bucket S3 com o site
 #   project_name  — nome do projeto
 #   environment   — ambiente (tcc, production, etc.)
+#   log_group_prefix — prefixo dos Log Groups do CloudWatch
 # =============================================================================
 
 set -o errexit
@@ -156,19 +157,19 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json << 'CW_C
         "collect_list": [
           {
             "file_path": "/var/log/nginx/access.log",
-            "log_group_name": "/aws/ec2/escolatech-tcc/nginx-access",
+            "log_group_name": "${log_group_prefix}/nginx-access",
             "log_stream_name": "{instance_id}",
             "retention_in_days": 30
           },
           {
             "file_path": "/var/log/nginx/error.log",
-            "log_group_name": "/aws/ec2/escolatech-tcc/nginx-error",
+            "log_group_name": "${log_group_prefix}/nginx-error",
             "log_stream_name": "{instance_id}",
             "retention_in_days": 30
           },
           {
             "file_path": "/var/log/user-data.log",
-            "log_group_name": "/aws/ec2/escolatech-tcc/bootstrap",
+            "log_group_name": "${log_group_prefix}/bootstrap",
             "log_stream_name": "{instance_id}",
             "retention_in_days": 14
           }
