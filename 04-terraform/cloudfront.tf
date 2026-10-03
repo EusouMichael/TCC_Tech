@@ -33,27 +33,25 @@ resource "aws_cloudfront_distribution" "main" {
   ##########################################################################
   # Origin 1: ALB
   #
-  # Protocolo HTTP (não HTTPS) para evitar erro 502 por mismatch de
-  # certificado: o ALB dns_name não é coberto pelo cert ACM do domínio.
-  # Segurança é garantida pelo custom header secreto (X-CF-Origin-Secret)
-  # validado pelo ALB listener rule. O usuário final tem HTTPS via CloudFront.
+  # CloudFront -> ALB usa HTTPS.
+  # O ALB utiliza certificado wildcard para o dominio configurado.
+  # O hostname da origem e um registro Route 53 dedicado (origin.<dominio>)
+  # que aponta por alias para o ALB, permitindo validacao TLS correta.
   ##########################################################################
 
   origin {
-    domain_name = aws_lb.main.dns_name
+    domain_name = "${var.origin_subdomain}.${var.domain_name}"
     origin_id   = "ALB-${local.name_prefix}"
 
     custom_origin_config {
       http_port                = 80
       https_port               = 443
-      origin_protocol_policy   = "http-only"
+      origin_protocol_policy   = "https-only"
       origin_ssl_protocols     = ["TLSv1.2"]
       origin_keepalive_timeout = 60
       origin_read_timeout      = 60
     }
 
-    # Header secreto — valida que a requisição veio do CloudFront.
-    # O valor é gerado aleatoriamente pelo Terraform (random_password).
     custom_header {
       name  = "X-CF-Origin-Secret"
       value = random_password.cf_origin_secret.result
