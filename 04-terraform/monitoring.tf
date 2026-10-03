@@ -58,17 +58,17 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
 }
 
 # Status check EC2 — detecta falha de instância
-resource "aws_cloudwatch_metric_alarm" "ec2_status_check" {
-  alarm_name          = "${local.name_prefix}-ec2-status-check"
-  alarm_description   = "Status check de instancia EC2 no ASG falhou"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
+resource "aws_cloudwatch_metric_alarm" "asg_low_capacity" {
+  alarm_name          = "${local.name_prefix}-asg-low-capacity"
+  alarm_description   = "ASG: capacidade em servico caiu para 1 instancia ou menos"
+  comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
-  metric_name         = "StatusCheckFailed"
-  namespace           = "AWS/EC2"
+  metric_name         = "GroupInServiceInstances"
+  namespace           = "AWS/AutoScaling"
   period              = 60
-  statistic           = "Maximum"
+  statistic           = "Minimum"
   threshold           = 1
-  treat_missing_data  = "notBreaching"
+  treat_missing_data  = "breaching"
 
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.main.name
@@ -77,7 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "ec2_status_check" {
   alarm_actions = [aws_sns_topic.alerts.arn]
 
   tags = {
-    Name = "${local.name_prefix}-alarm-ec2-status"
+    Name = "${local.name_prefix}-alarm-asg-low-capacity"
   }
 }
 
