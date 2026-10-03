@@ -1,1 +1,1417 @@
-The requested file reference is not currently visible. Use files.search or files.list to rediscover the file, then retry with a returned ref_id or file_id.
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Escola Tech — Cursos de tecnologia de ponta: AWS, Data Science, Full Stack, Cybersecurity, IA e UX/UI. Infraestrutura hospedada na AWS pela equipe NexCloud.">
+  <meta name="keywords" content="escola tech, cursos tecnologia, aws, data science, full stack, cybersecurity, inteligência artificial, ux ui">
+  <title>Escola Tech — Transforme sua carreira em tecnologia</title>
+
+  <style>
+    /* ──────────────────────────────────────────────────────────
+       Reset & Base
+    ────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:    #0a1628;
+      --blue-mid:     #0d2144;
+      --blue-light:   #1a3a6e;
+      --accent:       #4db8ff;
+      --accent-2:     #4dffb8;
+      --text-primary: #e8f0fe;
+      --text-muted:   #8aaccc;
+      --white:        #ffffff;
+      --card-bg:      rgba(255,255,255,0.04);
+      --card-border:  rgba(77,184,255,0.18);
+      --radius:       14px;
+      --shadow:       0 8px 32px rgba(0,0,0,0.35);
+      --transition:   all 0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+      background: var(--blue-dark);
+      color: var(--text-primary);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: var(--transition); }
+    a:hover { color: var(--accent-2); }
+
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       Navbar
+    ────────────────────────────────────────────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10, 22, 40, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(77,184,255,0.12);
+      padding: 14px 0;
+      transition: var(--transition);
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: var(--blue-dark) !important;
+      font-weight: 700 !important;
+      padding: 8px 22px;
+      border-radius: 24px;
+      font-size: 0.88rem !important;
+    }
+    .nav-cta:hover { background: var(--accent-2) !important; color: var(--blue-dark) !important; }
+
+    /* ──────────────────────────────────────────────────────────
+       Hero Section
+    ────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 40%, rgba(77,184,255,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(77,255,184,0.05) 0%, transparent 60%),
+        linear-gradient(160deg, var(--blue-dark) 0%, #0d1e3d 100%);
+      padding: 120px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(77,184,255,0.12) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(77,184,255,0.1);
+      border: 1px solid rgba(77,184,255,0.3);
+      border-radius: 24px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.08;
+      margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      max-width: 520px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #2196f3);
+      color: var(--white);
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 28px;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-block;
+      box-shadow: 0 4px 20px rgba(77,184,255,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(77,184,255,0.45);
+      color: var(--white);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 28px;
+      font-size: 1rem;
+      border: 2px solid rgba(77,184,255,0.4);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-block;
+    }
+    .btn-secondary:hover {
+      background: rgba(77,184,255,0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      flex-wrap: wrap;
+    }
+    .hero-stat-num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-2);
+    }
+    .hero-stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       Courses Section
+    ────────────────────────────────────────────────────────── */
+    .courses {
+      padding: 100px 0;
+      background: linear-gradient(180deg, var(--blue-dark) 0%, #080f1d 100%);
+    }
+
+    .courses-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .courses-header .section-subtitle { margin: 0 auto; }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .course-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .course-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(77,184,255,0.4);
+      box-shadow: var(--shadow);
+    }
+    .course-card:hover::before { opacity: 1; }
+
+    .course-icon {
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .course-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .tag-blue    { background: rgba(77,184,255,0.15);  color: var(--accent); }
+    .tag-green   { background: rgba(77,255,184,0.15);  color: var(--accent-2); }
+    .tag-purple  { background: rgba(180,77,255,0.15);  color: #b44dff; }
+    .tag-red     { background: rgba(255,77,77,0.15);   color: #ff6b6b; }
+    .tag-orange  { background: rgba(255,165,77,0.15);  color: #ffa54d; }
+    .tag-pink    { background: rgba(255,77,165,0.15);  color: #ff4da6; }
+
+    .course-card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .course-card p {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      margin-bottom: 20px;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .course-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .course-topics {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+    .course-topics li {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .course-topics li::before {
+      content: "▸ ";
+      color: var(--accent);
+    }
+
+    .course-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .course-price {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent-2);
+    }
+    .course-price small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      display: block;
+    }
+
+    .btn-course {
+      background: rgba(77,184,255,0.12);
+      border: 1px solid rgba(77,184,255,0.35);
+      color: var(--accent);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.87rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-course:hover {
+      background: var(--accent);
+      color: var(--blue-dark);
+      border-color: var(--accent);
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       Depoimentos Section
+    ────────────────────────────────────────────────────────── */
+    .testimonials {
+      padding: 100px 0;
+      background: #080f1d;
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .testimonials-header .section-subtitle { margin: 0 auto; }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: var(--transition);
+    }
+    .testimonial-card:hover {
+      border-color: rgba(77,184,255,0.35);
+      transform: translateY(-3px);
+    }
+
+    .testimonial-stars {
+      color: #ffd700;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      flex-shrink: 0;
+    }
+
+    .author-name {
+      font-weight: 700;
+      color: var(--white);
+      font-size: 0.92rem;
+    }
+    .author-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       Infraestrutura AWS Section
+    ────────────────────────────────────────────────────────── */
+    .infra {
+      padding: 100px 0;
+      background: linear-gradient(160deg, #080f1d 0%, var(--blue-dark) 100%);
+    }
+
+    .infra-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .infra-grid { grid-template-columns: 1fr; }
+    }
+
+    .infra-flow {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      font-family: monospace;
+      font-size: 0.82rem;
+    }
+
+    .infra-flow-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .flow-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #aac;
+    }
+    .flow-item:last-child { border-bottom: none; }
+    .flow-icon { font-size: 1.1rem; min-width: 28px; text-align: center; }
+    .flow-name { color: var(--accent); font-weight: 700; min-width: 120px; }
+    .flow-arrow { color: rgba(77,184,255,0.4); }
+
+    .infra-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .infra-badge {
+      background: rgba(77,184,255,0.08);
+      border: 1px solid rgba(77,184,255,0.2);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .infra-badge strong { color: var(--accent); }
+
+    .infra-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .metric-card {
+      background: rgba(77,255,184,0.05);
+      border: 1px solid rgba(77,255,184,0.15);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .metric-num {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--accent-2);
+    }
+    .metric-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       Matrícula Section (Formulário)
+    ────────────────────────────────────────────────────────── */
+    .enrollment {
+      padding: 100px 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 50%, rgba(77,184,255,0.07) 0%, transparent 70%),
+        linear-gradient(180deg, var(--blue-dark) 0%, #0a1628 100%);
+    }
+
+    .enrollment-wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .enrollment-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .form-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(77,184,255,0.2);
+      border-radius: 20px;
+      padding: 44px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 560px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(77,184,255,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      transition: var(--transition);
+      font-family: inherit;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      background: rgba(77,184,255,0.07);
+      box-shadow: 0 0 0 3px rgba(77,184,255,0.12);
+    }
+
+    .form-group select option { background: var(--blue-mid); color: var(--text-primary); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+
+    .form-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent), #2196f3);
+      color: var(--white);
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 28px;
+      font-size: 1.05rem;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(77,184,255,0.3);
+    }
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(77,184,255,0.45);
+    }
+
+    .form-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       Footer
+    ────────────────────────────────────────────────────────── */
+    footer {
+      background: #04080f;
+      border-top: 1px solid rgba(77,184,255,0.1);
+      padding: 60px 0 28px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+
+    .footer-brand p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 260px;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .footer-logo span { color: var(--accent); }
+
+    .footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul a {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .footer-col ul a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 12px;
+    }
+
+    .footer-bottom p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .footer-nexcloud {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer-nexcloud strong { color: var(--accent); }
+
+    /* ──────────────────────────────────────────────────────────
+       Notification Banner
+    ────────────────────────────────────────────────────────── */
+    .notification {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(10, 22, 40, 0.95);
+      border: 1px solid var(--accent-2);
+      border-radius: 14px;
+      padding: 16px 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 9999;
+      max-width: 320px;
+      animation: slideIn 0.3s ease;
+    }
+    .notification.show { display: block; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .notification p { color: var(--accent-2); font-size: 0.9rem; font-weight: 600; }
+    .notification small { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* ──────────────────────────────────────────────────────────
+       Smooth scroll offset for fixed navbar
+    ────────────────────────────────────────────────────────── */
+    section { scroll-margin-top: 70px; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       NAVBAR
+  ════════════════════════════════════════════════════════ -->
+  <nav class="navbar" role="navigation" aria-label="Navegação principal">
+    <div class="container">
+      <div class="nav-logo" aria-label="Escola Tech">
+        🎓 Escola<span>Tech</span>
+      </div>
+      <ul class="nav-links" role="list">
+        <li><a href="#cursos">Cursos</a></li>
+        <li><a href="#depoimentos">Depoimentos</a></li>
+        <li><a href="#infraestrutura">Infraestrutura</a></li>
+        <li><a href="#matricula" class="nav-cta">Matricule-se</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════════════════ -->
+  <section class="hero" id="inicio" aria-labelledby="hero-heading">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge" aria-label="Destaque">
+          🚀 <span>Turmas 2026 abertas</span>
+        </div>
+        <h1 id="hero-heading">
+          Transforme sua carreira<br>em <em>tecnologia</em>
+        </h1>
+        <p>
+          Aprenda com especialistas do mercado e domine as tecnologias mais demandadas do momento. Cursos práticos, projetos reais e certificações reconhecidas.
+        </p>
+        <div class="hero-actions">
+          <a href="#cursos" class="btn-primary">Ver todos os cursos</a>
+          <a href="#matricula" class="btn-secondary">Matricule-se agora</a>
+        </div>
+        <div class="hero-stats" role="list" aria-label="Estatísticas da escola">
+          <div role="listitem">
+            <div class="hero-stat-num">4.200+</div>
+            <div class="hero-stat-label">Alunos formados</div>
+          </div>
+          <div role="listitem">
+            <div class="hero-stat-num">6</div>
+            <div class="hero-stat-label">Cursos disponíveis</div>
+          </div>
+          <div role="listitem">
+            <div class="hero-stat-num">94%</div>
+            <div class="hero-stat-label">Taxa de empregabilidade</div>
+          </div>
+          <div role="listitem">
+            <div class="hero-stat-num">4,9★</div>
+            <div class="hero-stat-label">Avaliação média</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CURSOS
+  ════════════════════════════════════════════════════════ -->
+  <section class="courses" id="cursos" aria-labelledby="cursos-heading">
+    <div class="container">
+      <div class="courses-header">
+        <div class="section-label">Formação Profissional</div>
+        <h2 class="section-title" id="cursos-heading">Nossos cursos</h2>
+        <p class="section-subtitle">
+          Do iniciante ao avançado. Escolha sua trilha e comece a construir uma carreira sólida em tecnologia.
+        </p>
+      </div>
+
+      <div class="courses-grid" role="list" aria-label="Lista de cursos">
+
+        <!-- Curso 1: AWS -->
+        <article class="course-card" role="listitem">
+          <span class="course-icon" aria-hidden="true">☁️</span>
+          <span class="course-tag tag-blue">Cloud</span>
+          <h3>AWS Cloud Practitioner</h3>
+          <p>Domine os serviços da Amazon Web Services e prepare-se para as certificações mais valorizadas do mercado de nuvem.</p>
+          <div class="course-meta">
+            <span>⏱ 120h</span>
+            <span>📅 4 meses</span>
+            <span>🎯 Iniciante+</span>
+          </div>
+          <ul class="course-topics" aria-label="Tópicos do curso">
+            <li>EC2, S3, RDS, Lambda</li>
+            <li>VPC, IAM e Segurança</li>
+            <li>CloudFormation e Terraform</li>
+            <li>Certificação AWS CLF-C02</li>
+          </ul>
+          <div class="course-footer">
+            <div class="course-price">R$ 1.890<small>/mês × 12</small></div>
+            <button class="btn-course" onclick="selectCourse('AWS Cloud Practitioner')" aria-label="Matricular no curso AWS">Matricular</button>
+          </div>
+        </article>
+
+        <!-- Curso 2: Data Science -->
+        <article class="course-card" role="listitem">
+          <span class="course-icon" aria-hidden="true">📊</span>
+          <span class="course-tag tag-green">Data</span>
+          <h3>Data Science & Analytics</h3>
+          <p>Aprenda a transformar dados brutos em insights valiosos com Python, SQL e as principais ferramentas de BI do mercado.</p>
+          <div class="course-meta">
+            <span>⏱ 160h</span>
+            <span>📅 5 meses</span>
+            <span>🎯 Intermediário</span>
+          </div>
+          <ul class="course-topics" aria-label="Tópicos do curso">
+            <li>Python para Data Science</li>
+            <li>Machine Learning com Scikit-learn</li>
+            <li>Power BI e Tableau</li>
+            <li>Big Data com AWS Athena</li>
+          </ul>
+          <div class="course-footer">
+            <div class="course-price">R$ 2.190<small>/mês × 12</small></div>
+            <button class="btn-course" onclick="selectCourse('Data Science & Analytics')" aria-label="Matricular no curso Data Science">Matricular</button>
+          </div>
+        </article>
+
+        <!-- Curso 3: Full Stack -->
+        <article class="course-card" role="listitem">
+          <span class="course-icon" aria-hidden="true">💻</span>
+          <span class="course-tag tag-purple">Dev</span>
+          <h3>Full Stack Developer</h3>
+          <p>Desenvolva aplicações web completas do zero, dominando as tecnologias mais usadas por startups e grandes empresas.</p>
+          <div class="course-meta">
+            <span>⏱ 200h</span>
+            <span>📅 6 meses</span>
+            <span>🎯 Iniciante</span>
+          </div>
+          <ul class="course-topics" aria-label="Tópicos do curso">
+            <li>React, Node.js e TypeScript</li>
+            <li>REST APIs e GraphQL</li>
+            <li>Docker e Kubernetes</li>
+            <li>Deploy na AWS (ECS/EKS)</li>
+          </ul>
+          <div class="course-footer">
+            <div class="course-price">R$ 1.990<small>/mês × 12</small></div>
+            <button class="btn-course" onclick="selectCourse('Full Stack Developer')" aria-label="Matricular no curso Full Stack">Matricular</button>
+          </div>
+        </article>
+
+        <!-- Curso 4: Cybersecurity -->
+        <article class="course-card" role="listitem">
+          <span class="course-icon" aria-hidden="true">🔒</span>
+          <span class="course-tag tag-red">Security</span>
+          <h3>Cybersecurity Specialist</h3>
+          <p>Proteja sistemas, redes e dados contra ameaças digitais. Prepare-se para as certificações de segurança mais exigidas.</p>
+          <div class="course-meta">
+            <span>⏱ 180h</span>
+            <span>📅 6 meses</span>
+            <span>🎯 Intermediário</span>
+          </div>
+          <ul class="course-topics" aria-label="Tópicos do curso">
+            <li>Pentest e Ethical Hacking</li>
+            <li>SIEM e SOC Operations</li>
+            <li>AWS Security Hub e GuardDuty</li>
+            <li>CompTIA Security+</li>
+          </ul>
+          <div class="course-footer">
+            <div class="course-price">R$ 2.390<small>/mês × 12</small></div>
+            <button class="btn-course" onclick="selectCourse('Cybersecurity Specialist')" aria-label="Matricular no curso Cybersecurity">Matricular</button>
+          </div>
+        </article>
+
+        <!-- Curso 5: IA -->
+        <article class="course-card" role="listitem">
+          <span class="course-icon" aria-hidden="true">🤖</span>
+          <span class="course-tag tag-orange">IA</span>
+          <h3>Inteligência Artificial</h3>
+          <p>Construa modelos de IA generativa, NLP e visão computacional. Aplique na prática com serviços AWS AI/ML.</p>
+          <div class="course-meta">
+            <span>⏱ 150h</span>
+            <span>📅 5 meses</span>
+            <span>🎯 Intermediário</span>
+          </div>
+          <ul class="course-topics" aria-label="Tópicos do curso">
+            <li>Deep Learning com PyTorch</li>
+            <li>LLMs e Prompt Engineering</li>
+            <li>AWS SageMaker e Bedrock</li>
+            <li>MLOps e Deploy de Modelos</li>
+          </ul>
+          <div class="course-footer">
+            <div class="course-price">R$ 2.590<small>/mês × 12</small></div>
+            <button class="btn-course" onclick="selectCourse('Inteligência Artificial')" aria-label="Matricular no curso IA">Matricular</button>
+          </div>
+        </article>
+
+        <!-- Curso 6: UX/UI -->
+        <article class="course-card" role="listitem">
+          <span class="course-icon" aria-hidden="true">🎨</span>
+          <span class="course-tag tag-pink">Design</span>
+          <h3>UX/UI Design</h3>
+          <p>Crie interfaces intuitivas e experiências digitais que encantam usuários. Do research ao protótipo em Figma.</p>
+          <div class="course-meta">
+            <span>⏱ 120h</span>
+            <span>📅 4 meses</span>
+            <span>🎯 Iniciante</span>
+          </div>
+          <ul class="course-topics" aria-label="Tópicos do curso">
+            <li>Design System e Figma</li>
+            <li>User Research e Testes</li>
+            <li>Acessibilidade (WCAG)</li>
+            <li>Portfólio profissional</li>
+          </ul>
+          <div class="course-footer">
+            <div class="course-price">R$ 1.690<small>/mês × 12</small></div>
+            <button class="btn-course" onclick="selectCourse('UX/UI Design')" aria-label="Matricular no curso UX/UI">Matricular</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       DEPOIMENTOS
+  ════════════════════════════════════════════════════════ -->
+  <section class="testimonials" id="depoimentos" aria-labelledby="depoimentos-heading">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-label">Histórias reais</div>
+        <h2 class="section-title" id="depoimentos-heading">O que nossos alunos dizem</h2>
+        <p class="section-subtitle">
+          Mais de 4.200 profissionais transformaram suas carreiras com a Escola Tech.
+        </p>
+      </div>
+
+      <div class="testimonials-grid" role="list" aria-label="Depoimentos de alunos">
+
+        <article class="testimonial-card" role="listitem">
+          <div class="testimonial-stars" aria-label="Avaliação 5 estrelas">★★★★★</div>
+          <p class="testimonial-text">
+            "Comecei o curso de AWS sem nunca ter usado nuvem. Em 4 meses consegui a certificação Cloud Practitioner e fui contratado por uma consultoria AWS. O conteúdo é muito prático e atualizado."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg,#4db8ff,#2196f3);" aria-hidden="true">RM</div>
+            <div>
+              <div class="author-name">Rafael Mendes</div>
+              <div class="author-role">Cloud Engineer @ AWS Partner</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card" role="listitem">
+          <div class="testimonial-stars" aria-label="Avaliação 5 estrelas">★★★★★</div>
+          <p class="testimonial-text">
+            "O curso de Data Science me abriu portas que eu nem imaginava. Os projetos práticos com dados reais foram determinantes na minha entrevista. Hoje trabalho com BI em uma fintech."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg,#4dffb8,#2ecc71);" aria-hidden="true">JS</div>
+            <div>
+              <div class="author-name">Juliana Santos</div>
+              <div class="author-role">Data Analyst @ Fintech</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card" role="listitem">
+          <div class="testimonial-stars" aria-label="Avaliação 5 estrelas">★★★★★</div>
+          <p class="testimonial-text">
+            "Eu era designer gráfico e migrei para UX/UI. Em 4 meses construí um portfólio sólido e dobrei meu salário. Os professores são extremamente experientes e acessíveis."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg,#ff4da6,#e91e63);" aria-hidden="true">CM</div>
+            <div>
+              <div class="author-name">Carolina Moreira</div>
+              <div class="author-role">UX Designer @ Startup</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card" role="listitem">
+          <div class="testimonial-stars" aria-label="Avaliação 5 estrelas">★★★★★</div>
+          <p class="testimonial-text">
+            "O curso de Cybersecurity é muito denso e completo. Fiz a CompTIA Security+ logo depois e passei de primeira. A comunidade de alunos e o networking também são incríveis."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg,#ff6b6b,#e53935);" aria-hidden="true">LP</div>
+            <div>
+              <div class="author-name">Lucas Pereira</div>
+              <div class="author-role">Security Analyst @ Banco</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card" role="listitem">
+          <div class="testimonial-stars" aria-label="Avaliação 5 estrelas">★★★★★</div>
+          <p class="testimonial-text">
+            "Aprendi React, Node e Docker do zero. O projeto final foi um e-commerce completo que coloquei no portfólio. Consegui meu primeiro emprego como dev 2 semanas após terminar o curso."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg,#b44dff,#9c27b0);" aria-hidden="true">TL</div>
+            <div>
+              <div class="author-name">Thiago Lima</div>
+              <div class="author-role">Full Stack Dev @ Agência</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card" role="listitem">
+          <div class="testimonial-stars" aria-label="Avaliação 5 estrelas">★★★★★</div>
+          <p class="testimonial-text">
+            "O curso de IA é único no mercado: teoria sólida + AWS SageMaker na prática. Hoje trabalho com modelos generativos em produção. Vale cada centavo investido."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg,#ffa54d,#ff9800);" aria-hidden="true">AC</div>
+            <div>
+              <div class="author-name">Amanda Costa</div>
+              <div class="author-role">ML Engineer @ BigTech</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       INFRAESTRUTURA AWS
+  ════════════════════════════════════════════════════════ -->
+  <section class="infra" id="infraestrutura" aria-labelledby="infra-heading">
+    <div class="container">
+      <div class="infra-grid">
+        <div>
+          <div class="section-label">Tecnologia de ponta</div>
+          <h2 class="section-title" id="infra-heading">Hospedado na AWS com máxima disponibilidade</h2>
+          <p style="color: var(--text-muted); margin-bottom: 24px;">
+            Nossa plataforma é hospedada na Amazon Web Services, região São Paulo (sa-east-1), garantindo alta disponibilidade, segurança e performance para todos os alunos.
+          </p>
+
+          <div class="infra-badges" role="list" aria-label="Serviços AWS utilizados">
+            <div class="infra-badge" role="listitem"><strong>☁️ EC2</strong> Auto Scaling</div>
+            <div class="infra-badge" role="listitem"><strong>⚡ CloudFront</strong> CDN Global</div>
+            <div class="infra-badge" role="listitem"><strong>🛡️ WAF</strong> Proteção</div>
+            <div class="infra-badge" role="listitem"><strong>🔒 ACM</strong> SSL/TLS</div>
+            <div class="infra-badge" role="listitem"><strong>🌐 Route 53</strong> DNS</div>
+            <div class="infra-badge" role="listitem"><strong>📦 S3</strong> Storage</div>
+            <div class="infra-badge" role="listitem"><strong>📊 CloudWatch</strong> Monitor</div>
+            <div class="infra-badge" role="listitem"><strong>🔰 Shield</strong> DDoS</div>
+          </div>
+
+          <div class="infra-metrics" role="list" aria-label="Métricas de infraestrutura">
+            <div class="metric-card" role="listitem">
+              <div class="metric-num">99,9%</div>
+              <div class="metric-label">Uptime SLA</div>
+            </div>
+            <div class="metric-card" role="listitem">
+              <div class="metric-num">~15ms</div>
+              <div class="metric-label">Latência via CDN</div>
+            </div>
+            <div class="metric-card" role="listitem">
+              <div class="metric-num">2 AZs</div>
+              <div class="metric-label">Zonas de disponibilidade</div>
+            </div>
+            <div class="metric-card" role="listitem">
+              <div class="metric-num">73%</div>
+              <div class="metric-label">Economia vs on-premises</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="infra-flow" role="img" aria-label="Diagrama do fluxo de infraestrutura AWS">
+            <div class="infra-flow-title">🏗️ Arquitetura AWS — Fluxo de tráfego</div>
+            <div class="flow-item">
+              <span class="flow-icon">🌐</span>
+              <span class="flow-name">Internet</span>
+              <span class="flow-arrow">━━</span>
+              <span style="color:#8aaccc;">Usuário acessa o site</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">🔵</span>
+              <span class="flow-name">Route 53</span>
+              <span class="flow-arrow">↓</span>
+              <span style="color:#8aaccc;">DNS + Health Check</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">⚡</span>
+              <span class="flow-name">CloudFront</span>
+              <span class="flow-arrow">↓</span>
+              <span style="color:#8aaccc;">CDN + Cache + TLS</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">🛡️</span>
+              <span class="flow-name">AWS WAF</span>
+              <span class="flow-arrow">↓</span>
+              <span style="color:#8aaccc;">Filtra ataques</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">⚖️</span>
+              <span class="flow-name">ALB</span>
+              <span class="flow-arrow">↓</span>
+              <span style="color:#8aaccc;">Balanceia carga</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">📈</span>
+              <span class="flow-name">ASG</span>
+              <span class="flow-arrow">↓</span>
+              <span style="color:#8aaccc;">Escala 1-4 instâncias</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">💻</span>
+              <span class="flow-name">EC2 × 2</span>
+              <span class="flow-arrow">↓</span>
+              <span style="color:#8aaccc;">Nginx + PHP-FPM</span>
+            </div>
+            <div class="flow-item">
+              <span class="flow-icon">📦</span>
+              <span class="flow-name">S3</span>
+              <span class="flow-arrow">←</span>
+              <span style="color:#8aaccc;">Assets / Backups</span>
+            </div>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-top:12px; text-align:right;">
+            Infraestrutura provisionada com Terraform · NexCloud TCC
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FORMULÁRIO DE MATRÍCULA
+  ════════════════════════════════════════════════════════ -->
+  <section class="enrollment" id="matricula" aria-labelledby="matricula-heading">
+    <div class="container">
+      <div class="enrollment-wrapper">
+        <div class="enrollment-header">
+          <div class="section-label">Comece hoje</div>
+          <h2 class="section-title" id="matricula-heading">Faça sua matrícula</h2>
+          <p class="section-subtitle" style="margin: 0 auto;">
+            Preencha o formulário e nossa equipe entrará em contato em até 24 horas.
+          </p>
+        </div>
+
+        <div class="form-card">
+          <form id="enrollmentForm" novalidate aria-label="Formulário de matrícula">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">Nome *</label>
+                <input type="text" id="firstName" name="firstName" placeholder="João" required autocomplete="given-name">
+              </div>
+              <div class="form-group">
+                <label for="lastName">Sobrenome *</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Silva" required autocomplete="family-name">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">E-mail *</label>
+              <input type="email" id="email" name="email" placeholder="joao@email.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Telefone / WhatsApp</label>
+              <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" autocomplete="tel">
+            </div>
+
+            <div class="form-group">
+              <label for="course">Curso de interesse *</label>
+              <select id="course" name="course" required>
+                <option value="" disabled selected>Selecione o curso</option>
+                <option value="aws">AWS Cloud Practitioner — R$ 1.890/mês</option>
+                <option value="data-science">Data Science &amp; Analytics — R$ 2.190/mês</option>
+                <option value="full-stack">Full Stack Developer — R$ 1.990/mês</option>
+                <option value="cybersecurity">Cybersecurity Specialist — R$ 2.390/mês</option>
+                <option value="ia">Inteligência Artificial — R$ 2.590/mês</option>
+                <option value="ux-ui">UX/UI Design — R$ 1.690/mês</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="experience">Nível de experiência</label>
+              <select id="experience" name="experience">
+                <option value="" disabled selected>Selecione seu nível</option>
+                <option value="iniciante">Iniciante — sem experiência prévia</option>
+                <option value="basico">Básico — conhecimentos básicos</option>
+                <option value="intermediario">Intermediário — já trabalho na área</option>
+                <option value="avancado">Avançado — quero me especializar</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Como ficou sabendo da Escola Tech?</label>
+              <textarea id="message" name="message" placeholder="Ex: pesquisa no Google, indicação de amigo, redes sociais..."></textarea>
+            </div>
+
+            <button type="submit" class="form-submit">
+              🚀 Quero me matricular
+            </button>
+
+            <p class="form-note">
+              Ao enviar, você concorda com nossa política de privacidade. Sem spam, prometemos.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════════════ -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">🎓 Escola<span>Tech</span></div>
+          <p>Formando os profissionais de tecnologia do futuro. Cursos práticos, projetos reais e carreiras transformadas.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Cursos</h4>
+          <ul role="list">
+            <li><a href="#cursos">AWS Cloud</a></li>
+            <li><a href="#cursos">Data Science</a></li>
+            <li><a href="#cursos">Full Stack</a></li>
+            <li><a href="#cursos">Cybersecurity</a></li>
+            <li><a href="#cursos">Inteligência Artificial</a></li>
+            <li><a href="#cursos">UX/UI Design</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Escola</h4>
+          <ul role="list">
+            <li><a href="#depoimentos">Depoimentos</a></li>
+            <li><a href="#infraestrutura">Infraestrutura</a></li>
+            <li><a href="#matricula">Matrícula</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Carreiras</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contato</h4>
+          <ul role="list">
+            <li><a href="mailto:contato@escolatech.com.br">contato@escolatech.com.br</a></li>
+            <li><a href="#">WhatsApp</a></li>
+            <li><a href="#">LinkedIn</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">YouTube</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Escola Tech. Todos os direitos reservados.</p>
+        <div class="footer-nexcloud">
+          Infraestrutura por <strong>NexCloud</strong> · AWS sa-east-1 · TCC Computação em Nuvem
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification -->
+  <div class="notification" id="notification" role="alert" aria-live="polite">
+    <p id="notificationTitle">✅ Matrícula enviada!</p>
+    <small id="notificationMsg">Nossa equipe entrará em contato em até 24h.</small>
+  </div>
+
+  <script>
+    // ── Matrícula Form ────────────────────────────────────────────────
+    document.getElementById('enrollmentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const course    = document.getElementById('course').value;
+
+      if (!firstName || !email || !course) {
+        showNotification('⚠️ Campos obrigatórios', 'Preencha nome, e-mail e curso para continuar.', '#ffa54d');
+        return;
+      }
+
+      // Simula envio
+      const btn = this.querySelector('.form-submit');
+      btn.textContent = '⏳ Enviando...';
+      btn.disabled = true;
+
+      setTimeout(function() {
+        btn.textContent = '✅ Enviado com sucesso!';
+        showNotification('🎉 Matrícula recebida!', 'Entraremos em contato em até 24h, ' + firstName + '.');
+        document.getElementById('enrollmentForm').reset();
+        setTimeout(function() {
+          btn.textContent = '🚀 Quero me matricular';
+          btn.disabled = false;
+        }, 4000);
+      }, 1500);
+    });
+
+    // ── Selecionar curso pelo botão dos cards ────────────────────────
+    function selectCourse(courseName) {
+      const select = document.getElementById('course');
+      const map = {
+        'AWS Cloud Practitioner':   'aws',
+        'Data Science & Analytics': 'data-science',
+        'Full Stack Developer':     'full-stack',
+        'Cybersecurity Specialist': 'cybersecurity',
+        'Inteligência Artificial':  'ia',
+        'UX/UI Design':             'ux-ui'
+      };
+      if (map[courseName]) select.value = map[courseName];
+      document.getElementById('matricula').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ── Notification helper ───────────────────────────────────────────
+    function showNotification(title, msg, color) {
+      const el    = document.getElementById('notification');
+      const tEl   = document.getElementById('notificationTitle');
+      const mEl   = document.getElementById('notificationMsg');
+      tEl.textContent = title;
+      mEl.textContent = msg;
+      tEl.style.color = color || '#4dffb8';
+      el.classList.add('show');
+      setTimeout(function() { el.classList.remove('show'); }, 5000);
+    }
+
+    // ── Navbar scroll shadow ─────────────────────────────────────────
+    window.addEventListener('scroll', function() {
+      const nav = document.querySelector('.navbar');
+      if (window.scrollY > 40) {
+        nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.4)';
+      } else {
+        nav.style.boxShadow = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
