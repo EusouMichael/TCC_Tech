@@ -158,6 +158,12 @@ variable "health_check_grace_period" {
 
 # ── ALB ──────────────────────────────────────────────────────────────────────
 
+variable "alb_deletion_protection" {
+  description = "Protege o ALB contra exclusão acidental. Para laboratório/portfolio, false facilita terraform destroy."
+  type        = bool
+  default     = false
+}
+
 variable "alb_idle_timeout" {
   description = "Timeout de idle do ALB em segundos"
   type        = number
