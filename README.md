@@ -47,9 +47,9 @@ Internet → Route 53 → CloudFront (TLS) → WAF → ALB → ASG → EC2 (AL20
 
 **Detalhes:**
 - VPC 10.0.0.0/16 com 4 subnets (2 públicas + 2 privadas) em 2 AZs
-- CloudFront → ALB: protocolo **HTTP** com header secreto `X-CF-Origin-Secret`
+- CloudFront → ALB: protocolo **HTTPS** via `origin.<dominio>` com certificado ACM e header secreto `X-CF-Origin-Secret`
   - O ALB rejeita (403) qualquer requisição sem o header correto
-  - TLS termina no CloudFront; tráfego permanece dentro da rede AWS
+  - TLS é mantido também entre CloudFront e ALB; o hostname `origin.<dominio>` aponta por alias para o ALB
 - EC2 em subnets privadas: sem IP público, acesso via SSM Session Manager
 - ASG: min=2 / desired=2 / max=4, política Target Tracking CPU 70%
 
@@ -330,7 +330,13 @@ nexcloud-tcc/
 
 ---
 
-## 17. Limitações
+## 17. Deploy na AWS
+
+O passo a passo operacional está em [`AWS_DEPLOYMENT.md`](AWS_DEPLOYMENT.md) e o checklist de go-live em [`AWS_GO_LIVE_CHECKLIST.md`](AWS_GO_LIVE_CHECKLIST.md).
+
+O pipeline inicial em `.github/workflows/terraform-check.yml` executa `terraform fmt` e `terraform validate`. O deploy automático com OIDC será configurado depois que o primeiro ambiente manual estiver validado.
+
+## 18. Limitações
 
 - **Domínio:** `escolatech.com.br` deve ser registrado e ter name servers delegados para a Hosted Zone do Route 53. Sem isso, usar o output `website_url_cloudfront`.
 - **Terraform CLI:** necessário para `terraform apply`. Versão mínima: 1.5.0. Download: https://developer.hashicorp.com/terraform/install
