@@ -173,7 +173,7 @@ ASG cria EC2 → user_data.sh.tpl executa:
 | Target Group | HTTP:80, health check /health | alb.tf |
 | Health Check | /health, interval=30s, threshold=2 | alb.tf |
 | CloudFront | Multi-AZ edge, aliases domínio | cloudfront.tf |
-| CloudFront → ALB | HTTP (origin), header secreto | cloudfront.tf |
+| CloudFront → ALB | HTTPS (origin.<dominio>), header secreto | cloudfront.tf |
 | Viewer protocol | redirect-to-https | cloudfront.tf |
 | TLS | TLSv1.2_2021, ACM us-east-1 | cloudfront.tf |
 
