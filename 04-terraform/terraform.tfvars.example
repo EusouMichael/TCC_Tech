@@ -5,6 +5,7 @@
 aws_region   = "sa-east-1"
 project_name = "escolatech"
 environment  = "tcc"
+origin_subdomain = "origin"
 
 # Substitua pelo seu domínio registrado.
 # Se não tiver domínio, use o cloudfront_domain_name do output.
@@ -13,6 +14,7 @@ domain_name = "escolatech.com.br"
 # E-mail que receberá alertas do CloudWatch via SNS.
 # Confirme a assinatura no e-mail após o terraform apply.
 alert_email = "seu-email@exemplo.com"
+alb_deletion_protection = false
 
 # VPC
 vpc_cidr             = "10.0.0.0/16"
