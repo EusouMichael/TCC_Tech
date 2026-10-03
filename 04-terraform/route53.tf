@@ -67,6 +67,19 @@ resource "aws_route53_record" "apex" {
   }
 }
 
+# Origem do CloudFront — alias para o ALB.
+resource "aws_route53_record" "origin" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "${var.origin_subdomain}.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.main.dns_name
+    zone_id                = aws_lb.main.zone_id
+    evaluate_target_health = true
+  }
+}
+
 # www — IPv4
 resource "aws_route53_record" "www" {
   zone_id = aws_route53_zone.main.zone_id
