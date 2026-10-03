@@ -28,7 +28,7 @@ Os alarmes abaixo estão **implementados** em `monitoring.tf`. Todos enviam noti
 | Alarme | Recurso Terraform | Métrica | Threshold | Períodos | Ação |
 |--------|------------------|---------|-----------|----------|------|
 | cpu-high | `aws_cloudwatch_metric_alarm.cpu_high` | CPUUtilization (ASG) | ≥ 70% | 2 × 60s | SNS |
-| ec2-status-check | `aws_cloudwatch_metric_alarm.ec2_status_check` | StatusCheckFailed | ≥ 1 | 1 × 60s | SNS |
+| asg-low-capacity | `aws_cloudwatch_metric_alarm.asg_low_capacity` | GroupInServiceInstances | ≥ 1 | 1 × 60s | SNS |
 | alb-5xx | `aws_cloudwatch_metric_alarm.alb_5xx` | HTTPCode_Target_5XX_Count | ≥ 10 | 1 × 60s | SNS |
 | alb-latency | `aws_cloudwatch_metric_alarm.alb_latency` | TargetResponseTime p95 | ≥ 2s | 2 × 60s | SNS |
 | alb-unhealthy-hosts | `aws_cloudwatch_metric_alarm.alb_unhealthy_hosts` | UnHealthyHostCount | ≥ 1 | 1 × 60s | SNS |
