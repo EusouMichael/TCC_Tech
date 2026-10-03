@@ -34,6 +34,12 @@ variable "domain_name" {
   default     = "escolatech.com.br"
 }
 
+variable "origin_subdomain" {
+  description = "Subdomínio usado como hostname da origem HTTPS do CloudFront"
+  type        = string
+  default     = "origin"
+}
+
 variable "alert_email" {
   description = "E-mail para receber alertas do CloudWatch via SNS. Confirme a assinatura após o apply."
   type        = string
