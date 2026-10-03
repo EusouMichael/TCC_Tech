@@ -16,8 +16,9 @@ locals {
   user_data = base64encode(templatefile("${path.module}/user_data.sh.tpl", {
     aws_region    = var.aws_region
     assets_bucket = "${local.name_prefix}-assets-${local.account_id}"
-    project_name  = var.project_name
-    environment   = var.environment
+    project_name     = var.project_name
+    environment      = var.environment
+    log_group_prefix = "/aws/ec2/${local.name_prefix}"
   }))
 }
 
@@ -80,7 +81,8 @@ resource "aws_launch_template" "main" {
   tag_specifications {
     resource_type = "volume"
     tags = {
-      Name = "${local.name_prefix}-ebs"
+      Name      = "${local.name_prefix}-ebs"
+      ManagedBy = "Terraform"
     }
   }
 
