@@ -1,1 +1,766 @@
-The requested file reference is not currently visible. Use files.search or files.list to rediscover the file, then retry with a returned ref_id or file_id.
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexCloud TCC — Escola Tech na AWS</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0a0e1a;
+    color: #e0e6f0;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    padding: 56px 80px;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 0; left: 0;
+    animation: fadeIn 0.35s ease;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* backgrounds */
+  .bg-cover   { background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6e 60%, #0d2d5c 100%); }
+  .bg-dark    { background: linear-gradient(160deg, #0a1220 0%, #111e35 100%); }
+  .bg-green   { background: linear-gradient(135deg, #0e1f0e 0%, #163016 100%); }
+  .bg-purple  { background: linear-gradient(135deg, #1a0e2e 0%, #2a1550 100%); }
+
+  /* typography */
+  .label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #4db8ff;
+    margin-bottom: 14px;
+  }
+  h1 { font-size: clamp(2.2rem,5vw,3.6rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 18px; }
+  h2 { font-size: clamp(1.6rem,3vw,2.4rem); font-weight: 800; color: #fff; margin-bottom: 28px;
+       border-bottom: 3px solid #4db8ff; padding-bottom: 10px; display: inline-block; }
+  h3 { font-size: 1.05rem; font-weight: 700; color: #4db8ff; margin-bottom: 8px; }
+  p  { font-size: 0.95rem; line-height: 1.65; color: #9ab8d4; }
+  .subtitle { font-size: 1.3rem; color: #7ec8ff; margin-bottom: 10px; }
+
+  /* cards */
+  .cards   { display: grid; gap: 18px; margin-top: 18px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(77,184,255,0.18);
+    border-radius: 12px;
+    padding: 22px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: #4db8ff; }
+  .card-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+  /* table */
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.87rem; }
+  th { background: rgba(77,184,255,0.13); color: #4db8ff; padding: 9px 12px; text-align: left; font-weight: 700; }
+  td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #9ab8d4; }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  .tr-total td { color: #4dffb8; font-weight: 700; }
+
+  /* badges */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 16px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; }
+  .b-green  { background: rgba(77,255,184,.15); color: #4dffb8; }
+  .b-blue   { background: rgba(77,184,255,.15); color: #4db8ff; }
+  .b-orange { background: rgba(255,165,77,.15);  color: #ffa54d; }
+
+  /* big numbers */
+  .big-num   { font-size: 3rem; font-weight: 900; color: #4dffb8; line-height: 1; }
+  .big-label { font-size: 0.8rem; color: #6a8eaa; margin-top: 4px; }
+  .nums-row  { display: flex; gap: 44px; margin-top: 40px; flex-wrap: wrap; }
+
+  /* two-col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 16px; }
+
+  /* list */
+  ul.styled { list-style: none; margin-top: 12px; }
+  ul.styled li { padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+                  color: #9ab8d4; font-size: 0.9rem; }
+  ul.styled li::before { content: "▸ "; color: #4db8ff; font-weight: 700; }
+
+  /* highlight box */
+  .hbox { background: rgba(77,255,184,.07); border: 1px solid rgba(77,255,184,.25);
+          border-radius: 10px; padding: 16px 22px; margin-top: 16px; }
+  .hbox p { color: #4dffb8; font-weight: 600; font-size: 0.92rem; }
+
+  /* note box */
+  .note { background: rgba(255,165,77,.07); border: 1px solid rgba(255,165,77,.25);
+          border-radius: 10px; padding: 12px 18px; margin-top: 12px; }
+  .note p { color: #ffa54d; font-size: 0.83rem; }
+
+  /* code */
+  .code-block { background: rgba(0,0,0,.35); border: 1px solid rgba(77,184,255,.2);
+                border-radius: 8px; padding: 16px 20px; font-family: monospace;
+                font-size: 0.82rem; color: #4db8ff; margin-top: 14px; line-height: 1.6; }
+  .code-block .ok { color: #4dffb8; }
+
+  /* arch flow */
+  .arch-flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 18px 0; }
+  .arch-box { background: rgba(77,184,255,.1); border: 1px solid rgba(77,184,255,.35);
+              border-radius: 8px; padding: 9px 14px; color: #e0f0ff; font-weight: 600;
+              font-size: 0.82rem; text-align: center; white-space: nowrap; }
+  .arch-arrow { color: #4db8ff; font-size: 1.1rem; font-weight: 700; }
+
+  /* progress + nav */
+  .progress { position: fixed; top: 0; left: 0; height: 3px;
+              background: linear-gradient(90deg,#4db8ff,#4dffb8); transition: width .3s; z-index: 200; }
+  .slide-num { position: fixed; top: 18px; right: 24px; font-size: 0.72rem; color: #2a4a6a; z-index: 100; }
+  .nav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+         display: flex; align-items: center; gap: 14px;
+         background: rgba(10,20,40,.9); border: 1px solid rgba(77,184,255,.22);
+         border-radius: 36px; padding: 9px 22px; backdrop-filter: blur(10px); z-index: 100; }
+  .nav button { background: rgba(77,184,255,.14); border: 1px solid rgba(77,184,255,.35);
+                color: #4db8ff; border-radius: 50%; width: 34px; height: 34px; cursor: pointer;
+                font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
+                transition: all .2s; }
+  .nav button:hover  { background: rgba(77,184,255,.32); }
+  .nav button:disabled { opacity: .3; cursor: not-allowed; }
+  #counter { color: #6a8eaa; font-size: 0.82rem; min-width: 56px; text-align: center; }
+  .meta { margin-top: 36px; font-size: 0.82rem; color: #2a4a6a;
+          border-top: 1px solid #1e3a5f; padding-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="slide-num" id="slideNum"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 1 — CAPA
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-cover active" id="s1">
+  <div class="label">TCC · Computação em Nuvem · Case 3</div>
+  <h1>Hospedagem de Site<br>Institucional na AWS</h1>
+  <p class="subtitle">Escola Tech · Equipe NexCloud</p>
+  <p style="color:#4a7a9a;max-width:560px;margin-top:14px;">
+    Migração de infraestrutura on-premises para uma arquitetura cloud-native com
+    alta disponibilidade, escalabilidade automática e segurança em camadas.
+    Infraestrutura como Código com Terraform.
+  </p>
+  <div class="nums-row">
+    <div><div class="big-num">12/12</div><div class="big-label">requisitos atendidos</div></div>
+    <div><div class="big-num">2 AZs</div><div class="big-label">Multi-AZ (sa-east-1)</div></div>
+    <div><div class="big-num">~$156</div><div class="big-label">estimativa mensal (USD)</div></div>
+  </div>
+  <div class="meta">NexCloud · AWS sa-east-1 (São Paulo) · Amazon Linux 2023 · Terraform ≥ 1.5</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 2 — AGENDA
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s2">
+  <div class="label">Estrutura da Apresentação</div>
+  <h2>Agenda</h2>
+  <div class="cards cards-2">
+    <div class="card"><span class="card-icon">🎯</span>
+      <h3>01 · Problema e Contexto</h3>
+      <p>Escola Tech, limitações do servidor on-premises e motivação para a nuvem</p>
+    </div>
+    <div class="card"><span class="card-icon">📋</span>
+      <h3>02 · Requisitos</h3>
+      <p>12 requisitos mapeados e como cada um é atendido na AWS</p>
+    </div>
+    <div class="card"><span class="card-icon">🏗️</span>
+      <h3>03 · Arquitetura</h3>
+      <p>VPC Multi-AZ, ALB, ASG, CloudFront, WAF, S3, Route 53</p>
+    </div>
+    <div class="card"><span class="card-icon">🔒</span>
+      <h3>04 · Segurança</h3>
+      <p>WAF, Shield Standard, custom header, Security Groups, IMDSv2</p>
+    </div>
+    <div class="card"><span class="card-icon">⚡</span>
+      <h3>05 · Auto Scaling</h3>
+      <p>Target Tracking, bootstrap automático, site do S3</p>
+    </div>
+    <div class="card"><span class="card-icon">💰</span>
+      <h3>06 · Custos e Demo</h3>
+      <p>Estimativa de referência e demonstração ao vivo</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 3 — PROBLEMA
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s3">
+  <div class="label">Contexto do Projeto</div>
+  <h2>A Escola Tech e seus Desafios</h2>
+  <div class="two-col">
+    <div>
+      <h3>🏫 Quem é a Escola Tech?</h3>
+      <ul class="styled">
+        <li>Instituição de ensino em tecnologia</li>
+        <li>6 cursos: AWS, Data Science, Full Stack, Cybersecurity, IA, UX/UI</li>
+        <li>Site institucional como canal principal de matrículas</li>
+        <li>Picos de acesso concentrados em períodos de inscrição</li>
+      </ul>
+      <h3 style="margin-top:22px;">⚠️ Problemas On-Premises</h3>
+      <ul class="styled">
+        <li>Servidor único — ponto único de falha</li>
+        <li>Sem escalabilidade para picos de tráfego</li>
+        <li>Manutenção manual de hardware e SO</li>
+        <li>Sem proteção WAF ou DDoS</li>
+        <li>Backup sem automação garantida</li>
+        <li>Indisponibilidade durante períodos de matrícula</li>
+      </ul>
+    </div>
+    <div>
+      <h3>✅ Objetivos na AWS</h3>
+      <ul class="styled">
+        <li>Eliminar ponto único de falha (Multi-AZ)</li>
+        <li>Escalonamento automático (ASG)</li>
+        <li>HTTPS ponta-a-ponta (ACM + CloudFront)</li>
+        <li>Proteção WAF + Shield Standard</li>
+        <li>Monitoramento proativo (CloudWatch)</li>
+        <li>Infraestrutura como Código (Terraform)</li>
+        <li>Backup automatizado (AWS Backup)</li>
+      </ul>
+      <div class="hbox" style="margin-top:20px;">
+        <p>💡 SO escolhido: Amazon Linux 2023 — recomendação atual da AWS, usa dnf, sem dependências legadas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 4 — REQUISITOS
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s4">
+  <div class="label">Mapeamento de Requisitos</div>
+  <h2>Requisitos do Projeto</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Requisito</th><th>Solução AWS</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>R01</td><td>Alta disponibilidade</td><td>ALB + ASG + Multi-AZ (min=2)</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R02</td><td>Escalabilidade automática</td><td>ASG Target Tracking CPU 70%</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R03</td><td>Proteção contra ataques</td><td>WAF (5 regras) + Shield Standard</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R04</td><td>HTTPS para o usuário</td><td>ACM + CloudFront TLSv1.2_2021</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R05</td><td>Gerenciamento DNS</td><td>Route 53 + Health Check</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R06</td><td>Performance via CDN</td><td>CloudFront + cache de assets</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R07</td><td>Armazenamento</td><td>EBS gp3 20 GB + S3</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R08</td><td>Backup automatizado</td><td>AWS Backup (EBS diário 7d)</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R09</td><td>Monitoramento e alertas</td><td>CloudWatch (6 alarmes) + SNS</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R10</td><td>Infraestrutura como Código</td><td>Terraform ≥ 1.5</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R11</td><td>Custo estimado</td><td>Pay-as-you-go ~$156/mês (estimativa)</td><td><span class="badge b-green">Implementado</span></td></tr>
+      <tr><td>R12</td><td>Isolamento de rede</td><td>VPC + SGs + SSM (sem SSH)</td><td><span class="badge b-green">Implementado</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 5 — ARQUITETURA GERAL
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s5">
+  <div class="label">Visão Geral da Solução</div>
+  <h2>Arquitetura na AWS</h2>
+  <div class="arch-flow">
+    <div class="arch-box">🌐 Internet</div><div class="arch-arrow">→</div>
+    <div class="arch-box">🔵 Route 53</div><div class="arch-arrow">→</div>
+    <div class="arch-box">⚡ CloudFront<br><small>TLS 1.2+</small></div><div class="arch-arrow">→</div>
+    <div class="arch-box">🛡️ WAF<br><small>5 regras</small></div><div class="arch-arrow">→</div>
+    <div class="arch-box">⚖️ ALB<br><small>Multi-AZ</small></div><div class="arch-arrow">→</div>
+    <div class="arch-box">📈 ASG<br><small>min=2 max=4</small></div><div class="arch-arrow">→</div>
+    <div class="arch-box">💻 EC2 × 2<br><small>AL2023 Nginx</small></div>
+  </div>
+  <div class="cards cards-3" style="margin-top:14px;">
+    <div class="card">
+      <h3>🌐 Rede</h3>
+      <p>VPC 10.0.0.0/16<br>2 AZs: sa-east-1a / 1b<br>Subnets públicas (ALB/NAT)<br>Subnets privadas (EC2)</p>
+    </div>
+    <div class="card">
+      <h3>💻 Computação</h3>
+      <p>EC2 t3.small<br>Amazon Linux 2023<br>Nginx (site estático)<br>EBS gp3 20 GB criptografado</p>
+    </div>
+    <div class="card">
+      <h3>📦 Storage</h3>
+      <p>S3: assets (site + estáticos)<br>S3: logs ALB + CloudFront<br>S3: backups e configs<br>Todos privados + Block Public</p>
+    </div>
+  </div>
+  <div class="note"><p>⚠️ CloudFront → ALB: HTTP (porta 80) com header secreto X-CF-Origin-Secret. TLS termina no CloudFront. O ALB rejeita requisições sem o header (retorna 403).</p></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 6 — VPC
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s6">
+  <div class="label">Infraestrutura de Rede</div>
+  <h2>VPC Multi-AZ</h2>
+  <div class="two-col">
+    <div>
+      <h3>🔵 VPC: 10.0.0.0/16</h3>
+      <table style="margin-top:10px;font-size:0.83rem;">
+        <thead><tr><th>Subnet</th><th>CIDR</th><th>AZ</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td>public-1a</td><td>10.0.1.0/24</td><td>sa-east-1a</td><td><span class="badge b-blue">Pública</span></td></tr>
+          <tr><td>public-1b</td><td>10.0.2.0/24</td><td>sa-east-1b</td><td><span class="badge b-blue">Pública</span></td></tr>
+          <tr><td>private-1a</td><td>10.0.10.0/24</td><td>sa-east-1a</td><td><span class="badge b-orange">Privada</span></td></tr>
+          <tr><td>private-1b</td><td>10.0.11.0/24</td><td>sa-east-1b</td><td><span class="badge b-orange">Privada</span></td></tr>
+        </tbody>
+      </table>
+      <div class="hbox" style="margin-top:18px;"><p>✅ EC2 nas subnets privadas — sem IP público exposto</p></div>
+    </div>
+    <div>
+      <h3>🔀 Roteamento</h3>
+      <ul class="styled">
+        <li>1 Internet Gateway por VPC</li>
+        <li>2 NAT Gateways — 1 por AZ (HA)</li>
+        <li>Route Table pública → IGW</li>
+        <li>Route Table privada → NAT GW local</li>
+        <li>ALB nas subnets públicas</li>
+        <li>EC2 nas subnets privadas</li>
+        <li>VPC Flow Logs habilitados (30 dias)</li>
+      </ul>
+      <div class="note" style="margin-top:14px;">
+        <p>NAT Gateway × 2 representa ~25% do custo total (~$39/mês). Single NAT economiza ~$16/mês mas elimina redundância por AZ.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 7 — SEGURANÇA
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s7">
+  <div class="label">Segurança em Camadas</div>
+  <h2>Proteção da Aplicação</h2>
+  <div class="cards cards-2">
+    <div class="card">
+      <span class="card-icon">🛡️</span>
+      <h3>AWS WAF — 5 regras gerenciadas</h3>
+      <p>OWASP Top 10, SQLi, inputs maliciosos, IPs com má reputação e rate limiting (2000 req/5min por IP). Associado ao CloudFront — inspeciona na borda.</p>
+      <br><span class="badge b-orange">~$10,60/mês</span>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔰</span>
+      <h3>Shield Standard</h3>
+      <p>Proteção automática contra DDoS Layer 3/4 em CloudFront, ALB e Route 53. Incluso sem custo adicional em todos os serviços AWS.</p>
+      <br><span class="badge b-green">Gratuito</span>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔑</span>
+      <h3>Custom Header Secreto</h3>
+      <p>CloudFront injeta <code>X-CF-Origin-Secret</code> com valor aleatório gerado pelo Terraform. ALB rejeita (403) qualquer requisição sem esse header — impede bypass do WAF.</p>
+      <br><span class="badge b-green">Sem custo</span>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔐</span>
+      <h3>Security Groups</h3>
+      <p>SG ALB: aceita 80/443 da internet. SG EC2: aceita 80 apenas do SG ALB. Sem SSH exposto — acesso via SSM Session Manager.</p>
+      <br><span class="badge b-green">Incluso</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 8 — AUTO SCALING
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s8">
+  <div class="label">Auto Scaling Group</div>
+  <h2>Escalabilidade Automática</h2>
+  <div class="two-col">
+    <div>
+      <h3>⚙️ Configuração do ASG</h3>
+      <table style="margin-top:10px;">
+        <thead><tr><th>Parâmetro</th><th>Valor</th></tr></thead>
+        <tbody>
+          <tr><td>min_size</td><td>2 (garante Multi-AZ)</td></tr>
+          <tr><td>desired_capacity</td><td>2</td></tr>
+          <tr><td>max_size</td><td>4</td></tr>
+          <tr><td>Política</td><td>Target Tracking</td></tr>
+          <tr><td>Alvo CPU</td><td>70%</td></tr>
+          <tr><td>Warmup</td><td>300s</td></tr>
+          <tr><td>Health Check</td><td>ELB (/health)</td></tr>
+          <tr><td>Cooldown padrão</td><td>300s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>📊 Como funciona o Target Tracking</h3>
+      <ul class="styled">
+        <li>ASG monitora a CPU média de todas as instâncias</li>
+        <li>Adiciona instâncias se CPU média > 70%</li>
+        <li>Remove instâncias se CPU média cai (sem forçar abaixo de min=2)</li>
+        <li>Nenhuma intervenção manual necessária</li>
+      </ul>
+      <h3 style="margin-top:20px;">🔄 Bootstrap automático</h3>
+      <ul class="styled">
+        <li>Cada nova EC2 executa user_data.sh.tpl no boot</li>
+        <li>Instala Nginx via dnf (AL2023)</li>
+        <li>Busca index.html do S3 (<code>aws s3 cp</code>)</li>
+        <li>Valida /health antes de registrar no ALB</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 9 — DEPLOY DO SITE
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s9">
+  <div class="label">Deployment do Site</div>
+  <h2>Como o site chega a cada EC2</h2>
+  <div class="two-col">
+    <div>
+      <h3>📤 Terraform faz o upload</h3>
+      <div class="code-block">
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.assets.id
+  key    = "site/index.html"
+  source = "../05-website/index.html"
+  etag   = filemd5("../05-website/index.html")
+}
+      </div>
+      <p style="margin-top:12px;font-size:0.85rem;">O <code>terraform apply</code> faz o upload do <code>index.html</code> para o S3. Toda vez que o arquivo mudar, um novo apply o atualiza.</p>
+    </div>
+    <div>
+      <h3>📥 EC2 busca no bootstrap</h3>
+      <div class="code-block">
+# user_data.sh.tpl (executado no boot)
+aws s3 cp \
+  s3://$BUCKET/site/index.html \
+  /var/www/html/index.html
+
+# Fallback se S3 indisponível:
+# serve página de placeholder
+      </div>
+      <div class="hbox" style="margin-top:12px;">
+        <p>🔄 Toda nova instância criada pelo ASG recebe o site automaticamente — sem upload manual.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 10 — CDN + DNS
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s10">
+  <div class="label">Performance e DNS</div>
+  <h2>CloudFront + Route 53</h2>
+  <div class="cards cards-2">
+    <div class="card">
+      <span class="card-icon">⚡</span>
+      <h3>Amazon CloudFront</h3>
+      <ul class="styled">
+        <li>Edge locations globais (PriceClass_All)</li>
+        <li>Cache de assets estáticos: TTL 86400s (24h)</li>
+        <li>Conteúdo dinâmico: TTL 0 (sem cache)</li>
+        <li>Compressão gzip/brotli automática</li>
+        <li>HTTP → HTTPS redirect (viewer protocol)</li>
+        <li>TLSv1.2_2021, cert ACM us-east-1</li>
+        <li>WAF associado na borda</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-icon">🌐</span>
+      <h3>Amazon Route 53</h3>
+      <ul class="styled">
+        <li>Hosted Zone para o domínio</li>
+        <li>Registros A/AAAA (apex e www) → alias CloudFront</li>
+        <li>Health Check HTTPS /health, 30s</li>
+        <li>Pré-requisito: domínio registrado + DNS delegado</li>
+        <li>Sem domínio: usar output cloudfront_domain_name</li>
+      </ul>
+      <div class="note" style="margin-top:12px;">
+        <p>Não há failover ativo/passivo configurado. Resiliência é provida pelo ALB + ASG Multi-AZ.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 11 — MONITORAMENTO
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s11">
+  <div class="label">Observabilidade</div>
+  <h2>CloudWatch + SNS</h2>
+  <div class="two-col">
+    <div>
+      <h3>📊 6 Alarmes Configurados</h3>
+      <table style="margin-top:10px;font-size:0.82rem;">
+        <thead><tr><th>Alarme</th><th>Threshold</th><th>Ação</th></tr></thead>
+        <tbody>
+          <tr><td>cpu-high</td><td>CPU ≥ 70%, 2×60s</td><td>SNS email</td></tr>
+          <tr><td>ec2-status-check</td><td>Falha ≥ 1</td><td>SNS email</td></tr>
+          <tr><td>alb-5xx</td><td>≥ 10 erros/min</td><td>SNS email</td></tr>
+          <tr><td>alb-latency</td><td>p95 ≥ 2s</td><td>SNS email</td></tr>
+          <tr><td>alb-unhealthy</td><td>≥ 1 unhealthy</td><td>SNS email</td></tr>
+          <tr><td>alb-no-healthy</td><td>= 0 healthy</td><td>SNS email</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:12px;">
+        <p>Os alarmes notificam via SNS. O scaling é gerenciado exclusivamente pela política Target Tracking — não pelos alarmes.</p>
+      </div>
+    </div>
+    <div>
+      <h3>🔔 SNS + CloudWatch Logs</h3>
+      <ul class="styled">
+        <li>Tópico SNS: escolatech-tcc-alertas</li>
+        <li>Notificação por e-mail (requer confirmação)</li>
+        <li>CW Logs: nginx-access, nginx-error, bootstrap</li>
+        <li>CW Dashboard centralizado (6 widgets)</li>
+        <li>VPC Flow Logs (30 dias)</li>
+      </ul>
+      <h3 style="margin-top:18px;">💾 AWS Backup</h3>
+      <ul class="styled">
+        <li>EBS Snapshots diários (05h UTC / 02h BRT)</li>
+        <li>Retenção: 7 dias</li>
+        <li>Seleção por tag ManagedBy=Terraform</li>
+        <li>Vault dedicado + IAM Role</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 12 — TERRAFORM
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s12">
+  <div class="label">Infraestrutura como Código</div>
+  <h2>Terraform</h2>
+  <div class="two-col">
+    <div>
+      <h3>📁 Arquivos .tf</h3>
+      <ul class="styled">
+        <li><strong>main.tf</strong> — provider AWS + Random + data sources</li>
+        <li><strong>vpc.tf</strong> — VPC, subnets, IGW, NAT, route tables</li>
+        <li><strong>security.tf</strong> — SGs, WAF, ACM, IAM, header secreto</li>
+        <li><strong>ec2.tf</strong> — Launch Template + ASG + Target Tracking</li>
+        <li><strong>alb.tf</strong> — ALB, Target Group, listeners</li>
+        <li><strong>cloudfront.tf</strong> — CDN, cache policies, OAC</li>
+        <li><strong>route53.tf</strong> — Hosted Zone, records, health check</li>
+        <li><strong>s3.tf</strong> — 3 buckets + upload do index.html</li>
+        <li><strong>monitoring.tf</strong> — CloudWatch, SNS, AWS Backup</li>
+        <li><strong>user_data.sh.tpl</strong> — bootstrap AL2023</li>
+      </ul>
+    </div>
+    <div>
+      <h3>✅ Benefícios IaC</h3>
+      <ul class="styled">
+        <li>Reproducibilidade total do ambiente</li>
+        <li>Versionamento via Git</li>
+        <li><code>terraform plan</code> mostra mudanças antes de aplicar</li>
+        <li>Rollback via Git + novo apply</li>
+        <li>Documentação implícita na infraestrutura</li>
+      </ul>
+      <div class="code-block" style="margin-top:14px;">
+cd 04-terraform
+terraform init
+terraform validate
+terraform plan -var-file=terraform.tfvars
+terraform apply -var-file=terraform.tfvars
+<span class="ok"># Destruir após a apresentação:
+terraform destroy</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 13 — CUSTOS
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-purple" id="s13">
+  <div class="label">Análise de Custos (Estimativa)</div>
+  <h2>Custo Estimado de Referência</h2>
+  <div class="two-col">
+    <div>
+      <table style="font-size:0.84rem;">
+        <thead><tr><th>Serviço</th><th>Estimativa/mês</th></tr></thead>
+        <tbody>
+          <tr><td>EC2 t3.small × 2</td><td>$48,96</td></tr>
+          <tr><td>NAT Gateway × 2 (fixo + dados)</td><td>~$38,76</td></tr>
+          <tr><td>ALB (fixo + LCUs)</td><td>~$22,43</td></tr>
+          <tr><td>WAF (ACL + 5 regras + req)</td><td>~$10,60</td></tr>
+          <tr><td>CloudFront (transfer + req)</td><td>~$5,15</td></tr>
+          <tr><td>EBS gp3 20 GB × 2</td><td>$4,00</td></tr>
+          <tr><td>CloudWatch + Backup</td><td>~$6,00</td></tr>
+          <tr><td>Route 53 (zona + health)</td><td>$1,00</td></tr>
+          <tr><td>S3 (~5 GB)</td><td>~$0,12</td></tr>
+          <tr><td>ACM + Shield Standard</td><td>$0,00</td></tr>
+          <tr class="tr-total"><td><strong>TOTAL ESTIMADO</strong></td><td><strong>~$156/mês</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="color:#4dffb8;">💡 Observações Importantes</h3>
+      <ul class="styled">
+        <li>Valores variáveis: NAT dados, CF transfer, S3</li>
+        <li>t3.small usa CPU credits — surplus credits podem gerar custo adicional se CPU consistentemente alta</li>
+        <li>Câmbio BRL/USD: usar cotação do dia da apresentação</li>
+        <li>Comparativo on-premises: cenário hipotético ilustrativo, sem dados reais do case</li>
+        <li>Demo de 4h: custo &lt; $1 — destruir com terraform destroy após a apresentação</li>
+      </ul>
+      <div class="hbox">
+        <p>Detalhamento completo em 03-custos/estimativa-custos.md e custos.csv</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 14 — DEMO
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-green" id="s14">
+  <div class="label">Demonstração ao Vivo</div>
+  <h2>Roteiro da Demo</h2>
+  <div class="cards cards-2">
+    <div class="card">
+      <span class="card-icon">🌐</span>
+      <h3>1. Site funcionando</h3>
+      <p>Acesso via CloudFront domain (HTTPS). Headers HTTP. Página completa da Escola Tech.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🏗️</span>
+      <h3>2. Console AWS</h3>
+      <p>VPC (4 subnets), ASG (min=2, desired=2, max=4), Target Group (2 healthy), ALB listeners.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🛡️</span>
+      <h3>3. Segurança</h3>
+      <p>CloudFront + WAF associado. S3 com Block Public Access. EC2 sem IP público. SSM Session Manager.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">📊</span>
+      <h3>4. CloudWatch</h3>
+      <p>Dashboard com métricas reais. 6 alarmes em estado OK. Log groups das instâncias.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🏗️</span>
+      <h3>5. Terraform</h3>
+      <p><code>terraform validate</code> e <code>terraform output</code> mostrando os outputs reais do ambiente.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">💰</span>
+      <h3>6. Custos</h3>
+      <p>Estimativa ~$156/mês. Câmbio do dia. terraform destroy ao final.</p>
+    </div>
+  </div>
+  <div class="note"><p>Roteiro detalhado com contingências em: 01-apresentacao/roteiro-demo.md</p></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 15 — LIÇÕES
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-dark" id="s15">
+  <div class="label">Aprendizados</div>
+  <h2>Lições e Próximos Passos</h2>
+  <div class="two-col">
+    <div>
+      <h3>✅ O que funcionou bem</h3>
+      <ul class="styled">
+        <li>Terraform tornou a infraestrutura reproducível e auditável</li>
+        <li>AMI via SSM Parameter garante AL2023 atualizado sem fixar ID</li>
+        <li>Custom header secreto protege o ALB sem custo adicional</li>
+        <li>Bootstrap via S3 garante que o ASG funcione de forma autônoma</li>
+        <li>AWS Backup eliminou necessidade de cron manual</li>
+        <li>AL2023 com dnf: sem dependências legadas do AL2</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🚀 Próximos Passos</h3>
+      <ul class="styled">
+        <li>CI/CD com CodePipeline + CodeDeploy para deploy automático</li>
+        <li>EC2 Reserved Instances (1 ano) para reduzir custo em ~40%</li>
+        <li>VPC Endpoints para S3 e SSM (reduz tráfego NAT)</li>
+        <li>HTTPS CloudFront→ALB com subdomínio de origem dedicado</li>
+        <li>AWS Config para auditoria de conformidade de recursos</li>
+        <li>CloudFront Functions para headers de segurança reais</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 16 — ENCERRAMENTO
+══════════════════════════════════════════════════════════ -->
+<div class="slide bg-cover" id="s16">
+  <div class="label">Conclusão</div>
+  <h1>Escola Tech: online,<br>segura e escalável 🎯</h1>
+  <p class="subtitle">Arquitetura Multi-AZ na AWS — NexCloud TCC</p>
+
+  <div class="nums-row">
+    <div><div class="big-num">12/12</div><div class="big-label">requisitos atendidos</div></div>
+    <div><div class="big-num">2 AZs</div><div class="big-label">Alta disponibilidade</div></div>
+    <div><div class="big-num">~$156</div><div class="big-label">estimativa/mês (USD)</div></div>
+    <div><div class="big-num">IaC</div><div class="big-label">Terraform reproducível</div></div>
+  </div>
+
+  <div class="cards cards-3" style="margin-top:28px;">
+    <div class="card" style="text-align:center;">
+      <span class="card-icon">☁️</span>
+      <h3>AWS sa-east-1</h3>
+      <p>São Paulo</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <span class="card-icon">🐧</span>
+      <h3>Amazon Linux 2023</h3>
+      <p>Nginx · AL2023 · dnf</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <span class="card-icon">🏗️</span>
+      <h3>Terraform ≥ 1.5</h3>
+      <p>Equipe NexCloud</p>
+    </div>
+  </div>
+
+  <div class="meta" style="text-align:center;font-size:1rem;color:#4db8ff;margin-top:28px;">
+    Obrigado! Perguntas?
+  </div>
+</div>
+
+<!-- ══════════ NAV ══════════ -->
+<nav class="nav" aria-label="Navegação dos slides">
+  <button id="bFirst" onclick="go(1)" title="Primeiro" aria-label="Primeiro slide">⏮</button>
+  <button id="bPrev"  onclick="prev()"  title="Anterior" aria-label="Slide anterior">◀</button>
+  <span id="counter" aria-live="polite">1 / 16</span>
+  <button id="bNext"  onclick="next()"  title="Próximo" aria-label="Próximo slide">▶</button>
+  <button id="bLast"  onclick="go(TOTAL)" title="Último" aria-label="Último slide">⏭</button>
+</nav>
+
+<script>
+const TOTAL = 16;
+let cur = 1;
+
+function go(n) {
+  document.getElementById('s' + cur).classList.remove('active');
+  cur = Math.max(1, Math.min(n, TOTAL));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('counter').textContent = cur + ' / ' + TOTAL;
+  document.getElementById('slideNum').textContent = cur + ' / ' + TOTAL;
+  document.getElementById('progress').style.width = (cur / TOTAL * 100) + '%';
+  document.getElementById('bPrev').disabled  = cur === 1;
+  document.getElementById('bFirst').disabled = cur === 1;
+  document.getElementById('bNext').disabled  = cur === TOTAL;
+  document.getElementById('bLast').disabled  = cur === TOTAL;
+}
+function next() { go(cur + 1); }
+function prev() { go(cur - 1); }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); go(1); }
+  if (e.key === 'End')  { e.preventDefault(); go(TOTAL); }
+});
+
+go(1);
+</script>
+</body>
+</html>
