@@ -136,6 +136,26 @@ resource "aws_s3_bucket_cors_configuration" "assets" {
 # instâncias com o site correto automaticamente.
 ##############################################################################
 
+##############################################################################
+# API — arquivos da aplicação Node.js
+##############################################################################
+
+resource "aws_s3_object" "api_package" {
+  bucket       = aws_s3_bucket.assets.id
+  key          = "api/package.json"
+  source       = "${path.module}/../07-api/package.json"
+  content_type = "application/json"
+  etag         = filemd5("${path.module}/../07-api/package.json")
+}
+
+resource "aws_s3_object" "api_server" {
+  bucket       = aws_s3_bucket.assets.id
+  key          = "api/server.js"
+  source       = "${path.module}/../07-api/server.js"
+  content_type = "application/javascript"
+  etag         = filemd5("${path.module}/../07-api/server.js")
+}
+
 resource "aws_s3_object" "index_html" {
   bucket       = aws_s3_bucket.assets.id
   key          = "site/index.html"
