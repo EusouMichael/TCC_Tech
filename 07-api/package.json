@@ -10,6 +10,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "helmet": "^8.1.0",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "@aws-sdk/rds-signer": "^3.907.0"
   }
 }
