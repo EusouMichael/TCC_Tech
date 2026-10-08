@@ -4,15 +4,17 @@ on:
   pull_request:
     paths:
       - "04-terraform/**"
+      - "07-api/**"
       - ".github/workflows/terraform-check.yml"
   push:
     branches: ["main"]
     paths:
       - "04-terraform/**"
+      - "07-api/**"
       - ".github/workflows/terraform-check.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   validate:
@@ -34,22 +36,12 @@ jobs:
       - name: Terraform Init
         run: terraform init -backend=false
 
-      - name: Terraform Format
-        run: terraform fmt -recursive
-
-      - name: Commit Terraform formatting
-        working-directory: .
-        run: |
-          if git diff --quiet -- 04-terraform; then
-            echo "Terraform já está formatado."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add 04-terraform
-          git commit -m "chore: terraform fmt"
-          git push
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
       - name: Terraform Validate
         run: terraform validate
+
+      - name: Node Syntax Check
+        working-directory: 07-api
+        run: node --check server.js
