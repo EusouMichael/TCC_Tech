@@ -13,7 +13,7 @@
 | R01 | Disponibilidade | Alta disponibilidade — sem ponto único de falha | ALB + ASG + Multi-AZ | ✅ IMPLEMENTADO |
 | R02 | Escalabilidade | Escalonamento automático conforme demanda | Auto Scaling Group | ✅ IMPLEMENTADO |
 | R03 | Segurança | Proteção contra ataques web e DDoS L3/L4 | WAF + Shield Standard | ✅ IMPLEMENTADO |
-| R04 | Segurança | HTTPS para cliente e origem CloudFront→ALB | ACM + CloudFront + ALB TLS 1.2+ | ✅ IMPLEMENTADO |
+| R04 | Segurança | HTTPS para o cliente; HTTPS na origem quando domínio próprio está habilitado | CloudFront + ACM opcional + ALB | ✅ IMPLEMENTADO |
 | R05 | DNS | Gerenciamento de DNS com monitoramento | Route 53 + Health Check | ✅ IMPLEMENTADO |
 | R06 | Performance | Redução de latência via CDN | CloudFront | ✅ IMPLEMENTADO |
 | R07 | Armazenamento | Armazenamento confiável para aplicação | EBS gp3 + S3 | ✅ IMPLEMENTADO |
