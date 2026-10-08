@@ -258,3 +258,28 @@ ASG cria EC2 → user_data.sh.tpl executa:
 ---
 
 *NexCloud TCC — Código é a fonte de verdade — sa-east-1*
+
+## Camada de dados — RDS PostgreSQL
+
+A solução agora possui persistência para o cadastro de alunos/clientes.
+
+EC2 / Node.js API
+       |
+       | TCP 5432 + TLS
+       v
+RDS PostgreSQL (Multi-AZ, privado)
+       |
+Secrets Manager
+       |
+IAM Database Authentication
+
+### Segurança do banco
+
+- RDS em DB Subnet Group formado pelas duas subnets privadas.
+- publicly_accessible = false.
+- Security Group do RDS aceita TCP/5432 somente do Security Group das EC2.
+- Armazenamento criptografado.
+- Backup automático com retenção de 7 dias.
+- Credencial master gerenciada pelo RDS no Secrets Manager.
+- API usa usuário dedicado com rds_iam e política IAM rds-db:connect.
+- TLS com o bundle oficial de CA do RDS.
