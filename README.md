@@ -2,7 +2,7 @@
 
 > **Equipe:** NexCloud | **Case:** 3 — Hospedagem de Site Institucional  
 > **Região:** sa-east-1 (São Paulo) | **IaC:** Terraform ≥ 1.5.0  
-> **SO:** Amazon Linux 2023 | **Servidor web:** Nginx
+> **SO:** Amazon Linux 2023 | **Servidor web:** Nginx + API Node.js
 
 ---
 
@@ -33,16 +33,21 @@ Prover uma arquitetura AWS que:
 - Garanta HTTPS ponta-a-ponta para o usuário (CloudFront + ACM)
 - Seja completamente reproducível (Terraform)
 - Tenha monitoramento proativo com alertas (CloudWatch + SNS)
-- Faça backup automatizado dos volumes EBS (AWS Backup)
+- Faça backup automatizado dos volumes EBS e do banco RDS
+- Permita cadastro persistente de alunos/clientes com PostgreSQL
 
 ---
 
 ## 4. Arquitetura
 
 ```
-Internet → Route 53 → CloudFront (TLS) → WAF → ALB → ASG → EC2 (AL2023, Nginx)
-                                                          ↕
-                                                    S3 (assets/logs/backups)
+Internet → Route 53 → CloudFront → WAF → ALB → ASG → EC2 (Nginx + API)
+                                                ↓
+                                         RDS PostgreSQL privado
+                                                ↕
+                                         Secrets Manager / IAM
+
+EC2 → S3 (assets) | CloudWatch | SSM | NAT Gateway
 ```
 
 **Detalhes:**
@@ -72,7 +77,10 @@ Diagrama completo e fluxo detalhado: [`02-arquitetura/arquitetura.md`](02-arquit
 | S3 | Assets do site, logs, backups |
 | CloudWatch | Métricas, alarmes, dashboard, logs |
 | SNS | Alertas por e-mail |
-| AWS Backup | Snapshots EBS diários (retenção 7 dias) |
+| AWS Backup | Snapshots EBS diários + retenção |
+| Amazon RDS PostgreSQL | Cadastro persistente de alunos/clientes, Multi-AZ |
+| Secrets Manager | Credencial master gerenciada pelo RDS |
+| IAM DB Authentication | Acesso da API ao PostgreSQL sem senha persistente |
 | SSM Session Manager | Acesso administrativo (sem SSH) |
 
 ---
@@ -86,6 +94,9 @@ Diagrama completo e fluxo detalhado: [`02-arquitetura/arquitetura.md`](02-arquit
 - **IMDSv2** obrigatório nas instâncias
 - **EBS criptografado** (AES-256)
 - **S3** com Block Public Access em todos os buckets
+- **RDS** privado, sem acesso público, SG aceitando 5432 somente do SG EC2
+- **RDS** com armazenamento criptografado e backup automático
+- **API** usa usuário PostgreSQL dedicado com autenticação IAM e privilégios mínimos
 - **VPC Flow Logs** habilitados
 
 ---
@@ -132,15 +143,24 @@ Diagrama completo e fluxo detalhado: [`02-arquitetura/arquitetura.md`](02-arquit
 
 ---
 
-## 10. Backup
+## 10. Banco de dados e cadastro
 
-- **AWS Backup**: snapshots EBS diários às 05h UTC (02h BRT), retenção 7 dias
-- **S3 Versioning**: no bucket de assets, protege contra sobrescrita do `index.html`
-- Sem banco de dados no projeto — o site é HTML estático
+- **RDS PostgreSQL** em subnets privadas, sem acesso público e Multi-AZ.
+- **Secrets Manager** gerencia a senha do usuário master; a aplicação não recebe uma senha fixa em código.
+- A API cria o usuário `app_user` e usa **IAM Database Authentication** para conexões da aplicação.
+- O formulário do site envia `POST /api/enrollments` e grava os dados na tabela `enrollments`.
+- Conexões EC2 → RDS usam TLS com o bundle oficial de CA do RDS.
+- O SG do RDS permite TCP/5432 somente do SG das EC2.
+
+## 11. Backup
+
+- **AWS Backup**: snapshots EBS diários, retenção 7 dias.
+- **RDS**: backup automático, retenção 7 dias e Multi-AZ.
+- **S3 Versioning**: no bucket de assets, protege contra sobrescrita do `index.html`.
 
 ---
 
-## 11. Terraform
+## 12. Terraform
 
 ### Pré-requisitos
 
@@ -225,9 +245,9 @@ O estado é armazenado **localmente** em `terraform.tfstate`. Para uso em equipe
 
 ---
 
-## 12. Custos
+## 13. Custos
 
-Estimativa de referência para ambiente ativo 24/7:
+Estimativa de referência para ambiente ativo 24/7, agora incluindo RDS Multi-AZ:
 
 | Categoria | Estimativa/mês |
 |-----------|---------------|
@@ -236,14 +256,15 @@ Estimativa de referência para ambiente ativo 24/7:
 | ALB | ~$22 |
 | WAF | ~$11 |
 | CloudFront | ~$5 |
+| RDS PostgreSQL Multi-AZ db.t4g.micro + 20 GB | ~$75 |
 | Demais (EBS, S3, CW, R53, Backup) | ~$12 |
-| **Total estimado** | **~$156/mês** |
+| **Total estimado** | **~$231/mês** |
 
 > Valores variáveis dependem de tráfego, requests e volume de dados. Câmbio BRL não fixado — usar cotação do dia. Detalhamento em [`03-custos/estimativa-custos.md`](03-custos/estimativa-custos.md).
 
 ---
 
-## 13. Deploy do Site
+## 14. Deploy do Site
 
 O `index.html` em `05-website/` é enviado para o S3 automaticamente pelo Terraform:
 
@@ -260,7 +281,7 @@ Cada nova EC2 criada pelo ASG busca automaticamente o arquivo mais recente do S3
 
 ---
 
-## 14. Testes
+## 15. Testes
 
 Após o `terraform apply`:
 
@@ -286,7 +307,7 @@ Checklist funcional completo: [`06-monitoramento/monitoramento.md`](06-monitoram
 
 ---
 
-## 15. Demonstração
+## 16. Demonstração
 
 Roteiro completo de 10–12 minutos: [`01-apresentacao/roteiro-demo.md`](01-apresentacao/roteiro-demo.md)
 
@@ -294,7 +315,7 @@ Slides (16 slides navegáveis): abrir [`01-apresentacao/slides.html`](01-apresen
 
 ---
 
-## 16. Estrutura do Repositório
+## 17. Estrutura do Repositório
 
 ```
 nexcloud-tcc/
@@ -323,31 +344,35 @@ nexcloud-tcc/
 │   ├── user_data.sh.tpl         ← bootstrap AL2023
 │   └── terraform.tfvars.example ← variáveis de exemplo
 ├── 05-website/
-│   └── index.html               ← site institucional da Escola Tech
-└── 06-monitoramento/
+│   └── index.html               ← site + formulário conectado à API
+├── 06-monitoramento/
+│   └── monitoramento.md
+└── 07-api/
+    ├── package.json              ← dependências da API
+    └── server.js                 ← API Node.js + PostgreSQL/IAM
     └── monitoramento.md         ← alarmes, logs, backup, runbooks
 ```
 
 ---
 
-## 17. Deploy na AWS
+## 18. Deploy na AWS
 
 O passo a passo operacional está em [`AWS_DEPLOYMENT.md`](AWS_DEPLOYMENT.md) e o checklist de go-live em [`AWS_GO_LIVE_CHECKLIST.md`](AWS_GO_LIVE_CHECKLIST.md).
 
 O pipeline inicial em `.github/workflows/terraform-check.yml` executa `terraform fmt` e `terraform validate`. O deploy automático com OIDC será configurado depois que o primeiro ambiente manual estiver validado.
 
-## 18. Limitações
+## 19. Limitações
 
 - **Domínio:** `escolatech.com.br` deve ser registrado e ter name servers delegados para a Hosted Zone do Route 53. Sem isso, usar o output `website_url_cloudfront`.
 - **Terraform CLI:** necessário para `terraform apply`. Versão mínima: 1.5.0. Download: https://developer.hashicorp.com/terraform/install
 - **Credenciais AWS:** conta AWS com permissões para criar os recursos listados.
 - **t3 CPU credits:** instâncias t3.small podem gerar custo adicional de surplus credits se a CPU ficar acima de 20% de forma prolongada. Monitorar o alarme `cpu-high`.
-- **Validação `terraform validate`:** não executada neste ambiente (Terraform CLI não disponível). A revisão estática das referências cruzadas foi realizada manualmente — ver relatório de auditoria.
+- **Validação `terraform validate`:** o GitHub Actions executa `terraform fmt -check` e `terraform validate` a cada alteração relevante; o apply continua sendo uma etapa deliberada no ambiente AWS.
 - **Terraform plan:** o número exato de recursos só é conhecido após executar `terraform plan` no ambiente com credenciais AWS.
 
 ---
 
-## 18. Próximos Passos
+## 20. Próximos Passos
 
 - CI/CD com CodePipeline + S3 para deploy automático do site
 - EC2 Reserved Instances (1 ano) para reduzir custo EC2 em ~40%
