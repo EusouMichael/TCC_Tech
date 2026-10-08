@@ -129,9 +129,11 @@ resource "aws_cloudfront_distribution" "main" {
   ##########################################################################
 
   logging_config {
+    # Standard logging (legacy) desabilitado no TCC porque a conta possui SCP
+    # que bloqueia s3:ListAllMyBuckets, necessário para a ACL legada.
     include_cookies = false
-    bucket          = aws_s3_bucket.logs.bucket_domain_name
-    prefix          = "cloudfront/"
+    bucket          = ""
+    prefix          = ""
   }
 
   tags = {
@@ -139,8 +141,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   depends_on = [
-    aws_wafv2_web_acl.main,
-    aws_s3_bucket_acl.logs
+    aws_wafv2_web_acl.main
   ]
 }
 
