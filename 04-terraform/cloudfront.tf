@@ -103,9 +103,9 @@ resource "aws_cloudfront_distribution" "main" {
 
   viewer_certificate {
     cloudfront_default_certificate = !var.use_custom_domain
-    acm_certificate_arn             = var.use_custom_domain ? aws_acm_certificate_validation.cloudfront[0].certificate_arn : null
-    ssl_support_method              = var.use_custom_domain ? "sni-only" : null
-    minimum_protocol_version        = var.use_custom_domain ? "TLSv1.2_2021" : null
+    acm_certificate_arn            = var.use_custom_domain ? aws_acm_certificate_validation.cloudfront[0].certificate_arn : null
+    ssl_support_method             = var.use_custom_domain ? "sni-only" : null
+    minimum_protocol_version       = var.use_custom_domain ? "TLSv1.2_2021" : null
   }
 
   ##########################################################################
