@@ -27,11 +27,21 @@
 - [ ] WAF associado
 - [ ] ALB healthy
 - [ ] 2 EC2 healthy
+- [ ] RDS PostgreSQL available
+- [ ] RDS Multi-AZ ativo
+- [ ] RDS sem acesso público
+- [ ] Secrets Manager com credencial master gerenciada pelo RDS
+- [ ] IAM DB Authentication funcionando
 - [ ] ASG min/desired/max correto
 - [ ] SSM funcionando
 - [ ] SNS confirmado
 - [ ] CloudWatch dashboard funcionando
+- [ ] Logs Nginx, bootstrap e API chegando no CloudWatch
+- [ ] Alarmes RDS ativos
 - [ ] /health = 200
+- [ ] /api/health = 200 com database=ok
+- [ ] POST /api/enrollments = 201
+- [ ] Registro persistido no PostgreSQL
 - [ ] ALB direto = 403
 - [ ] site público funcionando
 
