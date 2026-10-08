@@ -111,6 +111,7 @@ resource "aws_security_group" "ec2" {
 ##############################################################################
 
 resource "aws_acm_certificate" "cloudfront" {
+  count = var.use_custom_domain ? 1 : 0
   provider = aws.us_east_1
 
   domain_name               = var.domain_name
@@ -128,7 +129,7 @@ resource "aws_acm_certificate" "cloudfront" {
 
 resource "aws_route53_record" "acm_cloudfront_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.cloudfront.domain_validation_options :
+    for dvo in aws_acm_certificate.cloudfront[0].domain_validation_options :
     dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
@@ -145,8 +146,9 @@ resource "aws_route53_record" "acm_cloudfront_validation" {
 }
 
 resource "aws_acm_certificate_validation" "cloudfront" {
+  count = var.use_custom_domain ? 1 : 0
   provider                = aws.us_east_1
-  certificate_arn         = aws_acm_certificate.cloudfront.arn
+  certificate_arn         = aws_acm_certificate.cloudfront[0].arn
   validation_record_fqdns = [for r in aws_route53_record.acm_cloudfront_validation : r.fqdn]
 }
 
@@ -161,6 +163,7 @@ resource "aws_acm_certificate_validation" "cloudfront" {
 
 # Certificado ALB mantido para uso futuro com origin HTTPS, se necessário.
 resource "aws_acm_certificate" "alb" {
+  count = var.use_custom_domain ? 1 : 0
   domain_name               = var.domain_name
   subject_alternative_names = ["*.${var.domain_name}"]
   validation_method         = "DNS"
@@ -176,7 +179,7 @@ resource "aws_acm_certificate" "alb" {
 
 resource "aws_route53_record" "acm_alb_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.alb.domain_validation_options :
+    for dvo in aws_acm_certificate.alb[0].domain_validation_options :
     dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
@@ -193,7 +196,8 @@ resource "aws_route53_record" "acm_alb_validation" {
 }
 
 resource "aws_acm_certificate_validation" "alb" {
-  certificate_arn         = aws_acm_certificate.alb.arn
+  count = var.use_custom_domain ? 1 : 0
+  certificate_arn         = aws_acm_certificate.alb[0].arn
   validation_record_fqdns = [for r in aws_route53_record.acm_alb_validation : r.fqdn]
 }
 
