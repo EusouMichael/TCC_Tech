@@ -174,6 +174,8 @@
   - `alb-latency`: p95 latência ≥ 2s
   - `alb-unhealthy-hosts`: hosts unhealthy no TG
   - `alb-no-healthy-hosts`: zero hosts saudáveis (crítico)
+  - `rds-cpu-high`: CPU do RDS ≥ 80%
+  - `rds-storage-low`: armazenamento livre do RDS abaixo de 20%
 - **Dashboard CloudWatch** com CPU, ALB requests, latência, códigos HTTP, instâncias ASG e hosts
 - **CloudWatch Logs**: nginx-access, nginx-error, bootstrap (via CW Agent nas EC2)
 - **SNS**: notificação por e-mail — requer confirmação da assinatura após `terraform apply`
@@ -209,7 +211,7 @@ terraform apply -var-file=terraform.tfvars
 
 **Implementação:**
 - Modelo pay-as-you-go (On-Demand), sem compromisso
-- Estimativa mensal de referência: **~$156/mês**
+- Estimativa mensal de referência: **~US$230/mês**, incluindo RDS Multi-AZ
 - Detalhamento completo em `03-custos/estimativa-custos.md` e `03-custos/custos.csv`
 - Conversão para BRL depende do câmbio do dia — não fixado
 - Comparativo com on-premises é **cenário hipotético** rotulado — sem dados reais do case
