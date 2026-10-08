@@ -183,6 +183,49 @@ resource "aws_cloudwatch_metric_alarm" "alb_no_healthy_hosts" {
 }
 
 ##############################################################################
+# CloudWatch Alarms — RDS PostgreSQL
+##############################################################################
+
+resource "aws_cloudwatch_metric_alarm" "rds_cpu_high" {
+  alarm_name          = "${local.name_prefix}-rds-cpu-high"
+  alarm_description   = "RDS PostgreSQL: CPU >= 80% por 2 minutos"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/RDS"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 80
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    DBInstanceIdentifier = aws_db_instance.postgres.id
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "rds_storage_low" {
+  alarm_name          = "${local.name_prefix}-rds-storage-low"
+  alarm_description   = "RDS PostgreSQL: armazenamento livre abaixo de 20%"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "FreeStorageSpace"
+  namespace           = "AWS/RDS"
+  period              = 300
+  statistic           = "Minimum"
+  threshold           = var.db_allocated_storage * 1024 * 1024 * 1024 * 0.20
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    DBInstanceIdentifier = aws_db_instance.postgres.id
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+}
+
+##############################################################################
 # CloudWatch Log Groups
 ##############################################################################
 
