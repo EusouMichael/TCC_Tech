@@ -165,6 +165,8 @@ chmod 644 /etc/pki/rds/global-bundle.pem
 # ─── 7. Instalar e configurar API de cadastro ─────────────────────────────────
 echo "--- Instalando API Escola Tech ---"
 mkdir -p /opt/escolatech-api
+touch /var/log/escolatech-api.log
+chown ec2-user:ec2-user /var/log/escolatech-api.log
 aws s3 cp "s3://${assets_bucket}/api/package.json" /opt/escolatech-api/package.json --region "${aws_region}"
 aws s3 cp "s3://${assets_bucket}/api/server.js" /opt/escolatech-api/server.js --region "${aws_region}"
 
@@ -204,7 +206,9 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/escolatech-api
+ReadWritePaths=/opt/escolatech-api /var/log/escolatech-api.log
+StandardOutput=append:/var/log/escolatech-api.log
+StandardError=append:/var/log/escolatech-api.log
 
 [Install]
 WantedBy=multi-user.target
@@ -238,6 +242,12 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json << 'CW_C
             "log_group_name": "${log_group_prefix}/nginx-error",
             "log_stream_name": "{instance_id}",
             "retention_in_days": 30
+          },
+          {
+            "file_path": "/var/log/escolatech-api.log",
+            "log_group_name": "${log_group_prefix}/api",
+            "log_stream_name": "{instance_id}",
+            "retention_in_days": 14
           },
           {
             "file_path": "/var/log/user-data.log",
