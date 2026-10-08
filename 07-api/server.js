@@ -96,9 +96,9 @@ async function initializeDatabase() {
           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
       `);
-      await admin.query("GRANT USAGE ON SCHEMA public TO app_user;");
-      await admin.query("GRANT SELECT, INSERT, UPDATE ON enrollments TO app_user;");
-      await admin.query("GRANT USAGE, SELECT ON SEQUENCE enrollments_id_seq TO app_user;");
+      await admin.query('GRANT USAGE ON SCHEMA public TO "' + process.env.DB_APP_USERNAME + '";');
+      await admin.query('GRANT SELECT, INSERT, UPDATE ON enrollments TO "' + process.env.DB_APP_USERNAME + '";');
+      await admin.query('GRANT USAGE, SELECT ON SEQUENCE enrollments_id_seq TO "' + process.env.DB_APP_USERNAME + '";');
       await admin.query("CREATE INDEX IF NOT EXISTS idx_enrollments_email ON enrollments(email);");
       await admin.query("CREATE INDEX IF NOT EXISTS idx_enrollments_created_at ON enrollments(created_at);");
       await admin.end();
