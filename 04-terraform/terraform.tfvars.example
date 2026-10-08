@@ -6,10 +6,11 @@ aws_region   = "sa-east-1"
 project_name = "escolatech"
 environment  = "tcc"
 origin_subdomain = "origin"
+use_custom_domain = false
 
-# Substitua pelo seu domínio registrado.
-# Se não tiver domínio, use o cloudfront_domain_name do output.
-domain_name = "escolatech.com.br"
+# Para este TCC, false usa automaticamente https://<id>.cloudfront.net.
+# Só preencha domain_name quando use_custom_domain = true.
+domain_name = ""
 
 # E-mail que receberá alertas do CloudWatch via SNS.
 # Confirme a assinatura no e-mail após o terraform apply.
