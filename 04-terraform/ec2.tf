@@ -150,7 +150,10 @@ resource "aws_autoscaling_group" "main" {
   depends_on = [
     aws_lb_target_group.main,
     aws_nat_gateway.main,
-    aws_s3_object.index_html
+    aws_s3_object.index_html,
+    aws_s3_object.api_package,
+    aws_s3_object.api_server,
+    aws_rds_instance.postgres
   ]
 }
 
