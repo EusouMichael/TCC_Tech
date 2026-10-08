@@ -403,3 +403,21 @@ Buckets de assets/backups possuem proteção contra exclusão automática enquan
 ```
 
 **Não pule etapas.**
+
+
+## Banco de dados e cadastro
+
+O deploy cria automaticamente um RDS PostgreSQL privado e Multi-AZ.
+
+Após o apply:
+
+1. Confirme o RDS como **Available**.
+2. Confirme que o SG do RDS permite 5432 somente do SG EC2.
+3. Confirme a credencial master no Secrets Manager.
+4. Aguarde o bootstrap das EC2.
+5. Teste:
+   - `curl https://<cloudfront>/api/health`
+   - envie um `POST /api/enrollments`
+6. Confirme os logs da API no CloudWatch.
+
+A API utiliza IAM Database Authentication para as conexões normais. O usuário master é usado apenas no bootstrap para preparar o usuário de aplicação e o schema.
