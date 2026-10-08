@@ -184,7 +184,7 @@ variable "alb_idle_timeout" {
 variable "health_check_path" {
   description = "Path do health check do ALB e Target Group. Deve ser servido pela aplicação na EC2."
   type        = string
-  default     = "/health"
+  default     = "/api/health"
 }
 
 variable "health_check_interval" {
