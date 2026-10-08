@@ -258,3 +258,59 @@ variable "alb_latency_threshold" {
   type        = number
   default     = 2
 }
+
+# ── Banco de dados PostgreSQL ────────────────────────────────────────────────
+
+variable "db_name" {
+  description = "Nome lógico do banco PostgreSQL"
+  type        = string
+  default     = "escolatech"
+}
+
+variable "db_master_username" {
+  description = "Usuário administrativo inicial do RDS. A senha é gerenciada pelo Secrets Manager."
+  type        = string
+  default     = "app_admin"
+}
+
+variable "db_instance_class" {
+  description = "Classe da instância RDS PostgreSQL"
+  type        = string
+  default     = "db.t4g.micro"
+}
+
+variable "db_allocated_storage" {
+  description = "Armazenamento inicial do RDS em GB"
+  type        = number
+  default     = 20
+}
+
+variable "db_max_allocated_storage" {
+  description = "Limite de autoscaling de armazenamento do RDS em GB"
+  type        = number
+  default     = 50
+}
+
+variable "db_multi_az" {
+  description = "Habilita standby Multi-AZ para alta disponibilidade"
+  type        = bool
+  default     = true
+}
+
+variable "db_backup_retention_period" {
+  description = "Retenção de backups automáticos do RDS em dias"
+  type        = number
+  default     = 7
+}
+
+variable "db_deletion_protection" {
+  description = "Proteção contra exclusão acidental do RDS"
+  type        = bool
+  default     = false
+}
+
+variable "db_skip_final_snapshot" {
+  description = "Em TCC, permite terraform destroy sem snapshot final"
+  type        = bool
+  default     = true
+}
