@@ -10,14 +10,13 @@ Este documento é o roteiro operacional para colocar o projeto no ar na AWS com 
 Internet
   |
   v
-Route 53
-  |
-  v
 CloudFront + WAF
   |
-  | HTTPS
+  | Route 53 opcional quando há domínio próprio
+  |
+  | HTTP (sem domínio próprio) / HTTPS (com domínio próprio)
   v
-origin.<dominio> -> ALB :443
+ALB :80 / :443
   |
   | HTTP
   v
@@ -89,25 +88,25 @@ O comando `sts get-caller-identity` deve retornar a conta e a identidade utiliza
 
 ## 4. Domínio
 
-A configuração atual utiliza:
+**Não é obrigatório para o primeiro deploy.** O projeto está preparado para dois modos:
 
-- `var.domain_name` para o domínio público;
-- ACM em **us-east-1** para CloudFront;
-- ACM em **sa-east-1** para o ALB;
-- `origin.<dominio>` como hostname HTTPS da origem;
-- Route 53 para os registros.
+### Modo recomendado para este laboratório
 
-Portanto, antes do `apply`, precisamos ter um domínio real e controlável.
-
-Exemplo:
-
-```
-escolatech.com.br
-www.escolatech.com.br
-origin.escolatech.com.br
+```hcl
+use_custom_domain = false
+domain_name       = ""
 ```
 
-O Terraform cria a Hosted Zone, mas o registrador precisa receber os Name Servers retornados pelo output `route53_name_servers`.
+Nesse modo o CloudFront usa automaticamente o certificado padrão e o endereço `https://<id>.cloudfront.net`. Route 53 e ACM são desativados. O CloudFront → ALB usa HTTP e o ALB aceita somente requisições com o header secreto do CloudFront.
+
+### Modo com domínio próprio
+
+```hcl
+use_custom_domain = true
+domain_name       = "seu-dominio.com.br"
+```
+
+Nesse modo são criados ACM, Route 53 e o hostname `origin.<dominio>` para HTTPS entre CloudFront e ALB. O registrador deve delegar os Name Servers retornados pelo output `route53_name_servers`.
 
 ## 5. Configurar Terraform
 
@@ -119,9 +118,12 @@ cp terraform.tfvars.example terraform.tfvars
 Edite:
 
 ```hcl
-domain_name = "SEU-DOMINIO.COM.BR"
+use_custom_domain = false
+domain_name = ""
 alert_email = "SEU-EMAIL"
 ```
+
+Se possuir um domínio, pode ativar `use_custom_domain = true` e preencher `domain_name`.
 
 Para o primeiro laboratório:
 
@@ -165,8 +167,7 @@ Conferir principalmente:
 - S3;
 - CloudFront;
 - WAF;
-- ACM;
-- Route 53;
+- ACM/Route 53, somente se `use_custom_domain = true`;
 - CloudWatch;
 - SNS;
 - AWS Backup.
@@ -221,11 +222,13 @@ Não publicar secrets ou o state Terraform.
 
 ### Site
 
-Abrir:
+Com o modo padrão:
 
+```bash
+terraform output -raw website_url_cloudfront
 ```
-https://SEU-DOMINIO.COM.BR
-```
+
+Abra a URL `https://<id>.cloudfront.net`. Com domínio próprio, use `website_url`.
 
 ### Health
 
@@ -241,7 +244,7 @@ HTTP 200
 
 ### ALB direto
 
-O acesso direto ao ALB em HTTPS deve receber:
+No modo sem domínio, o acesso direto ao ALB em HTTP deve receber:
 
 ```
 HTTP 403
