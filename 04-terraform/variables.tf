@@ -314,3 +314,10 @@ variable "db_skip_final_snapshot" {
   type        = bool
   default     = true
 }
+
+
+variable "db_app_username" {
+  description = "Usuário da aplicação PostgreSQL. Autenticação via IAM, sem senha persistente."
+  type        = string
+  default     = "app_user"
+}
