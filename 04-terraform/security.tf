@@ -134,7 +134,8 @@ resource "aws_route53_record" "acm_cloudfront_validation" {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
-    } : {}
+    }
+  } : {}
 
   allow_overwrite = true
   name            = each.value.name
