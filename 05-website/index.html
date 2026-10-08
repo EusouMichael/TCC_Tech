@@ -1348,32 +1348,51 @@
 
   <script>
     // ── Matrícula Form ────────────────────────────────────────────────
-    document.getElementById('enrollmentForm').addEventListener('submit', function(e) {
+    document.getElementById('enrollmentForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const firstName = document.getElementById('firstName').value.trim();
       const email     = document.getElementById('email').value.trim();
+      const phone     = document.getElementById('phone').value.trim();
       const course    = document.getElementById('course').value;
+      const experience = document.getElementById('experience').value;
+      const message   = document.getElementById('message').value.trim();
 
       if (!firstName || !email || !course) {
-        showNotification('⚠️ Campos obrigatórios', 'Preencha nome, e-mail e curso para continuar.', '#ffa54d');
+        showNotification('Campos obrigatórios', 'Preencha nome, e-mail e curso para continuar.', '#ffa54d');
         return;
       }
 
-      // Simula envio
       const btn = this.querySelector('.form-submit');
-      btn.textContent = '⏳ Enviando...';
+      btn.textContent = 'Enviando...';
       btn.disabled = true;
 
-      setTimeout(function() {
-        btn.textContent = '✅ Enviado com sucesso!';
-        showNotification('🎉 Matrícula recebida!', 'Entraremos em contato em até 24h, ' + firstName + '.');
+      try {
+        const response = await fetch('/api/enrollments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, email, phone, course, experience, message })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Não foi possível concluir o cadastro.');
+        }
+
+        btn.textContent = 'Enviado com sucesso!';
+        showNotification('Matrícula recebida!', 'Cadastro #' + data.enrollment.id + ' registrado com sucesso.');
         document.getElementById('enrollmentForm').reset();
+      } catch (error) {
+        console.error(error);
+        btn.textContent = 'Tentar novamente';
+        showNotification('Falha no cadastro', 'Não foi possível salvar seus dados. Tente novamente em instantes.', '#ff6b6b');
+      } finally {
         setTimeout(function() {
           btn.textContent = '🚀 Quero me matricular';
           btn.disabled = false;
-        }, 4000);
-      }, 1500);
+        }, 3000);
+      }
     });
 
     // ── Selecionar curso pelo botão dos cards ────────────────────────
