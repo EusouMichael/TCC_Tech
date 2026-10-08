@@ -60,12 +60,12 @@ output "asg_name" {
 
 output "route53_zone_id" {
   description = "ID da Hosted Zone Route 53"
-  value       = aws_route53_zone.main.zone_id
+  value       = one(aws_route53_zone.main[*].zone_id)
 }
 
 output "route53_name_servers" {
   description = "Name servers — configure estes no registrador do domínio"
-  value       = aws_route53_zone.main.name_servers
+  value       = one(aws_route53_zone.main[*].name_servers)
 }
 
 # ── S3 ───────────────────────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ output "cloudwatch_dashboard_name" {
 
 output "website_url" {
   description = "URL do site (requer domínio registrado e DNS delegado)"
-  value       = "https://${var.domain_name}"
+  value       = var.use_custom_domain ? "https://${var.domain_name}" : "N/A — use website_url_cloudfront"
 }
 
 output "website_url_cloudfront" {
@@ -126,7 +126,7 @@ output "deployment_summary" {
     project     = var.project_name
     environment = var.environment
     region      = var.aws_region
-    domain      = var.domain_name
+    domain      = var.use_custom_domain ? var.domain_name : "CloudFront default domain"
     asg         = "min=${var.asg_min_size} desired=${var.asg_desired_capacity} max=${var.asg_max_size}"
     instance    = var.instance_type
     backend     = "local (ver comentário em main.tf para backend S3)"
