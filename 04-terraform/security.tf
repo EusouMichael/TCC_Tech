@@ -153,17 +153,10 @@ resource "aws_acm_certificate_validation" "cloudfront" {
 ##############################################################################
 # ACM — Certificado para o ALB (sa-east-1)
 #
-# O CloudFront conecta ao ALB usando o DNS name do ALB como hostname de origem.
-# Para evitar erro 502 por mismatch de certificado, o ALB usa HTTP como protocolo
-# de origem (não HTTPS). TLS é terminado no CloudFront com o certificado ACM
-# us-east-1. Comunicação CloudFront → ALB ocorre em HTTP dentro da VPC AWS,
-# o que é aceitável dado que:
-#   1. O tráfego permanece dentro da rede AWS (não exposto à internet).
-#   2. O custom header secreto valida a origem.
-#   3. O usuário final tem HTTPS ponta-a-ponta via CloudFront.
-#
-# Se HTTPS CloudFront → ALB for obrigatório, crie um subdomínio (ex:
-# origin.escolatech.com.br) com certificado sa-east-1 e configure-o no ALB.
+# O CloudFront utiliza origin.<dominio> como origem HTTPS.
+# Esse hostname aponta por Alias para o ALB e o certificado abaixo cobre
+# o dominio, permitindo validacao TLS correta entre CloudFront e ALB.
+# O trafego ALB -> EC2 permanece HTTP dentro da VPC privada.
 ##############################################################################
 
 # Certificado ALB mantido para uso futuro com origin HTTPS, se necessário.
