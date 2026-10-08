@@ -419,3 +419,55 @@ resource "aws_iam_instance_profile" "ec2" {
     Name = "${local.name_prefix}-ec2-profile"
   }
 }
+
+##############################################################################
+# Security Group — RDS PostgreSQL
+#
+# Banco privado: somente as EC2 da aplicação podem acessar TCP/5432.
+# Não existe acesso público ao RDS.
+##############################################################################
+
+resource "aws_security_group" "rds" {
+  name        = "${local.name_prefix}-sg-rds"
+  description = "RDS PostgreSQL - acesso somente das EC2 da aplicacao"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "PostgreSQL somente das EC2"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+  }
+
+  egress {
+    description = "Saida para servicos AWS necessarios"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${local.name_prefix}-sg-rds"
+  }
+}
+
+##############################################################################
+# IAM — EC2 pode ler somente o segredo gerenciado pelo RDS.
+##############################################################################
+
+resource "aws_iam_role_policy" "ec2_rds_secret" {
+  name = "${local.name_prefix}-ec2-rds-secret"
+  role = aws_iam_role.ec2_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid      = "ReadRDSMasterSecret"
+      Effect   = "Allow"
+      Action   = ["secretsmanager:GetSecretValue"]
+      Resource = aws_db_instance.postgres.master_user_secret[0].secret_arn
+    }]
+  })
+}
