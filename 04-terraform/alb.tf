@@ -120,7 +120,7 @@ resource "aws_lb_listener" "http" {
 ##############################################################################
 
 resource "aws_lb_listener" "https" {
-  count = var.use_custom_domain ? 1 : 0
+  count             = var.use_custom_domain ? 1 : 0
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
   protocol          = "HTTPS"
