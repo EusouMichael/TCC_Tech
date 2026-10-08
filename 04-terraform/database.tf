@@ -45,8 +45,8 @@ resource "aws_db_instance" "postgres" {
   skip_final_snapshot = var.db_skip_final_snapshot
 
   auto_minor_version_upgrade = true
-  apply_immediately           = false
-  ca_cert_identifier          = "rds-ca-rsa2048-g1"
+  apply_immediately          = false
+  ca_cert_identifier         = "rds-ca-rsa2048-g1"
 
   performance_insights_enabled = false
 
