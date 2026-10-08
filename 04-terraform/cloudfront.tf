@@ -125,16 +125,12 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   ##########################################################################
-  # Logs de acesso
+  # Logs de acesso CloudFront
+  #
+  # Standard logging legado removido neste ambiente porque a conta do TCC
+  # possui um SCP que bloqueia s3:ListAllMyBuckets e impede a configuração
+  # baseada em ACL. Os logs do ALB continuam no bucket S3.
   ##########################################################################
-
-  logging_config {
-    # Standard logging (legacy) desabilitado no TCC porque a conta possui SCP
-    # que bloqueia s3:ListAllMyBuckets, necessário para a ACL legada.
-    include_cookies = false
-    bucket          = ""
-    prefix          = ""
-  }
 
   tags = {
     Name = "${local.name_prefix}-cloudfront"
