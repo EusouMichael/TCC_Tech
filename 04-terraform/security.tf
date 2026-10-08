@@ -128,21 +128,20 @@ resource "aws_acm_certificate" "cloudfront" {
 }
 
 resource "aws_route53_record" "acm_cloudfront_validation" {
-  for_each = {
+  for_each = var.use_custom_domain ? {
     for dvo in aws_acm_certificate.cloudfront[0].domain_validation_options :
     dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
-    }
-  }
+    } : {}
 
   allow_overwrite = true
   name            = each.value.name
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = aws_route53_zone.main.zone_id
+  zone_id         = aws_route53_zone.main[0].zone_id
 }
 
 resource "aws_acm_certificate_validation" "cloudfront" {
@@ -178,21 +177,20 @@ resource "aws_acm_certificate" "alb" {
 }
 
 resource "aws_route53_record" "acm_alb_validation" {
-  for_each = {
+  for_each = var.use_custom_domain ? {
     for dvo in aws_acm_certificate.alb[0].domain_validation_options :
     dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
-    }
-  }
+    } : {}
 
   allow_overwrite = true
   name            = each.value.name
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = aws_route53_zone.main.zone_id
+  zone_id         = aws_route53_zone.main[0].zone_id
 }
 
 resource "aws_acm_certificate_validation" "alb" {
