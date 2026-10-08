@@ -123,7 +123,7 @@ resource "aws_s3_bucket_cors_configuration" "assets" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "HEAD"]
-    allowed_origins = ["https://${var.domain_name}", "https://www.${var.domain_name}"]
+    allowed_origins = var.use_custom_domain ? ["https://${var.domain_name}", "https://www.${var.domain_name}"] : ["*"]
     max_age_seconds = 3600
   }
 }
@@ -188,29 +188,13 @@ resource "aws_s3_bucket_ownership_controls" "logs" {
   bucket = aws_s3_bucket.logs.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
-resource "aws_s3_bucket_acl" "logs" {
-  bucket = aws_s3_bucket.logs.id
-
-  access_control_policy {
-    grant {
-      grantee {
-        id   = data.aws_cloudfront_log_delivery_canonical_user_id.main.id
-        type = "CanonicalUser"
-      }
-      permission = "FULL_CONTROL"
-    }
-
-    owner {
-      id = data.aws_canonical_user_id.current.id
-    }
-  }
-
-  depends_on = [aws_s3_bucket_ownership_controls.logs]
-}
+# CloudFront legacy logging via S3 ACL foi removido porque a conta do TCC possui
+# um SCP que bloqueia s3:ListAllMyBuckets. O bucket permanece seguro com
+# BucketOwnerEnforced; os logs do ALB continuam sendo entregues via bucket policy.
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "logs" {
   bucket = aws_s3_bucket.logs.id
@@ -285,29 +269,7 @@ resource "aws_s3_bucket_policy" "logs" {
         Action   = "s3:GetBucketAcl"
         Resource = aws_s3_bucket.logs.arn
       },
-      {
-        Sid    = "AllowCloudFrontLogs"
-        Effect = "Allow"
-        Principal = {
-          Service = "delivery.logs.amazonaws.com"
-        }
-        Action   = "s3:PutObject"
-        Resource = "${aws_s3_bucket.logs.arn}/cloudfront/*"
-        Condition = {
-          StringEquals = {
-            "s3:x-amz-acl" = "bucket-owner-full-control"
-          }
-        }
-      },
-      {
-        Sid    = "AllowCFGetBucketAcl"
-        Effect = "Allow"
-        Principal = {
-          Service = "delivery.logs.amazonaws.com"
-        }
-        Action   = "s3:GetBucketAcl"
-        Resource = aws_s3_bucket.logs.arn
-      }
+
     ]
   })
 
