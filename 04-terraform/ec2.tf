@@ -156,7 +156,7 @@ resource "aws_autoscaling_group" "main" {
     aws_s3_object.index_html,
     aws_s3_object.api_package,
     aws_s3_object.api_server,
-    aws_rds_instance.postgres
+    aws_db_instance.postgres
   ]
 }
 
