@@ -182,7 +182,7 @@ DB_HOST=${aws_rds_host}
 DB_PORT=5432
 DB_NAME=${db_name}
 DB_APP_USERNAME=${db_app_username}
-DB_SECRET_ARN=${SECRET_ARN}
+DB_SECRET_ARN=$${SECRET_ARN}
 ENVIRONMENT=${environment}
 ENV
 
