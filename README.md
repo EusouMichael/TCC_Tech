@@ -41,7 +41,8 @@ Prover uma arquitetura AWS que:
 ## 4. Arquitetura
 
 ```
-Internet → Route 53 → CloudFront → WAF → ALB → ASG → EC2 (Nginx + API)
+Internet → CloudFront → WAF → ALB → ASG → EC2 (Nginx + API)
+                    ↳ Route 53 é opcional quando `use_custom_domain = true`
                                                 ↓
                                          RDS PostgreSQL privado
                                                 ↕
@@ -52,9 +53,9 @@ EC2 → S3 (assets) | CloudWatch | SSM | NAT Gateway
 
 **Detalhes:**
 - VPC 10.0.0.0/16 com 4 subnets (2 públicas + 2 privadas) em 2 AZs
-- CloudFront → ALB: protocolo **HTTPS** via `origin.<dominio>` com certificado ACM e header secreto `X-CF-Origin-Secret`
-  - O ALB rejeita (403) qualquer requisição sem o header correto
-  - TLS é mantido entre CloudFront e ALB; o hostname `origin.<dominio>` aponta por alias para o ALB
+- Viewer → CloudFront: **HTTPS** usando o certificado padrão do CloudFront quando `use_custom_domain = false`
+- CloudFront → ALB: **HTTP** no modo sem domínio próprio; com domínio próprio, pode usar **HTTPS** via `origin.<dominio>` + ACM
+  - Em ambos os modos, o ALB rejeita (403) requisições sem o header secreto `X-CF-Origin-Secret`
 - EC2 em subnets privadas: sem IP público, acesso via SSM Session Manager
 - ASG: min=2 / desired=2 / max=4, política Target Tracking CPU 70%
 
@@ -66,11 +67,11 @@ Diagrama completo e fluxo detalhado: [`02-arquitetura/arquitetura.md`](02-arquit
 
 | Serviço | Uso |
 |---------|-----|
-| Route 53 | DNS + health check |
-| CloudFront | CDN + TLS ponta-a-ponta + WAF |
+| Route 53 | DNS + health check (opcional com domínio próprio) |
+| CloudFront | CDN + HTTPS para o viewer + WAF |
 | AWS WAF | Proteção L7 (OWASP, SQLi, rate limit) |
 | Shield Standard | DDoS L3/L4 (gratuito, automático) |
-| ACM | Certificados TLS (gratuito para serviços AWS) |
+| ACM | Certificados TLS quando `use_custom_domain = true` |
 | ALB | Balanceamento de carga Multi-AZ |
 | Auto Scaling Group | Escalabilidade automática |
 | EC2 t3.small | Amazon Linux 2023, Nginx |
@@ -126,7 +127,7 @@ Diagrama completo e fluxo detalhado: [`02-arquitetura/arquitetura.md`](02-arquit
 
 ## 9. Monitoramento
 
-6 alarmes CloudWatch configurados em `monitoring.tf`:
+8 alarmes CloudWatch configurados em `monitoring.tf`:
 
 | Alarme | Threshold | Ação |
 |--------|-----------|------|
@@ -202,7 +203,7 @@ cd 04-terraform
 
 # Copiar e editar as variáveis
 cp terraform.tfvars.example terraform.tfvars
-# Editar terraform.tfvars: domain_name, alert_email, etc.
+# Editar terraform.tfvars: alert_email e, se desejar, domain_name/use_custom_domain
 
 # Inicializar providers
 terraform init
@@ -293,8 +294,8 @@ curl -I https://<cloudfront_domain_name>
 curl https://<cloudfront_domain_name>/health
 # Esperado: HTTP 200, body "healthy"
 
-# 3. ALB rejeita sem header (via DNS direto do ALB)
-curl -I https://<alb_dns_name>
+# 3. ALB rejeita sem header (modo sem domínio usa HTTP)
+curl -I http://<alb_dns_name>
 # Esperado: HTTP 403 (sem o header secreto do CloudFront)
 
 # 4. Verificar API e banco
