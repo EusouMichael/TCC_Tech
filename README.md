@@ -30,7 +30,7 @@ Prover uma arquitetura AWS que:
 - Elimine o ponto único de falha (Multi-AZ)
 - Escale automaticamente conforme demanda (ASG)
 - Proteja contra ataques web (WAF) e DDoS L3/L4 (Shield Standard)
-- Garanta HTTPS ponta-a-ponta para o usuário (CloudFront + ACM)
+- Garanta HTTPS no acesso do usuário e na origem CloudFront → ALB
 - Seja completamente reproducível (Terraform)
 - Tenha monitoramento proativo com alertas (CloudWatch + SNS)
 - Faça backup automatizado dos volumes EBS e do banco RDS
@@ -54,7 +54,7 @@ EC2 → S3 (assets) | CloudWatch | SSM | NAT Gateway
 - VPC 10.0.0.0/16 com 4 subnets (2 públicas + 2 privadas) em 2 AZs
 - CloudFront → ALB: protocolo **HTTPS** via `origin.<dominio>` com certificado ACM e header secreto `X-CF-Origin-Secret`
   - O ALB rejeita (403) qualquer requisição sem o header correto
-  - TLS é mantido também entre CloudFront e ALB; o hostname `origin.<dominio>` aponta por alias para o ALB
+  - TLS é mantido entre CloudFront e ALB; o hostname `origin.<dominio>` aponta por alias para o ALB
 - EC2 em subnets privadas: sem IP público, acesso via SSM Session Manager
 - ASG: min=2 / desired=2 / max=4, política Target Tracking CPU 70%
 
