@@ -28,10 +28,21 @@ variable "environment" {
   }
 }
 
+variable "use_custom_domain" {
+  description = "Usa domínio próprio com ACM/Route 53. false = usa o domínio padrão *.cloudfront.net, sem domínio registrado."
+  type        = bool
+  default     = false
+}
+
 variable "domain_name" {
-  description = "Domínio principal do site. Deve estar registrado e com DNS delegado ao Route 53. Sem domínio real, use o CloudFront domain diretamente."
+  description = "Domínio próprio do site. Obrigatório somente quando use_custom_domain = true."
   type        = string
-  default     = "escolatech.com.br"
+  default     = ""
+
+  validation {
+    condition     = !var.use_custom_domain || length(trimspace(var.domain_name)) > 0
+    error_message = "domain_name deve ser informado quando use_custom_domain = true."
+  }
 }
 
 variable "origin_subdomain" {
