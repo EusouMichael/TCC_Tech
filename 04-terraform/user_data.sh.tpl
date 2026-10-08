@@ -39,7 +39,7 @@ dnf install -y nginx
 
 # ─── 3. Instalar CloudWatch Agent ────────────────────────────────────────────
 echo "--- Instalando CloudWatch Agent ---"
-dnf install -y amazon-cloudwatch-agent nodejs
+dnf install -y amazon-cloudwatch-agent nodejs22 nodejs22-npm
 
 # ─── 4. Criar estrutura de diretórios ────────────────────────────────────────
 echo "--- Criando diretórios ---"
@@ -154,6 +154,13 @@ FALLBACK
 fi
 
 chown nginx:nginx "$DEST"
+
+# ─── 6.5 Baixar CA oficial do Amazon RDS ──────────────────────────────────────
+echo "--- Instalando CA oficial do RDS ---"
+mkdir -p /etc/pki/rds
+curl -fsSL https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem \
+  -o /etc/pki/rds/global-bundle.pem
+chmod 644 /etc/pki/rds/global-bundle.pem
 
 # ─── 7. Instalar e configurar API de cadastro ─────────────────────────────────
 echo "--- Instalando API Escola Tech ---"
