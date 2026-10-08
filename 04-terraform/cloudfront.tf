@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "main" {
   comment             = "Escola Tech — ${var.environment} — NexCloud TCC"
   default_root_object = "index.html"
   price_class         = var.cloudfront_price_class
-  aliases             = [var.domain_name, "www.${var.domain_name}"]
+  aliases             = var.use_custom_domain ? [var.domain_name, "www.${var.domain_name}"] : []
   http_version        = "http2and3"
   wait_for_deployment = false
 
@@ -40,13 +40,13 @@ resource "aws_cloudfront_distribution" "main" {
   ##########################################################################
 
   origin {
-    domain_name = "${var.origin_subdomain}.${var.domain_name}"
+    domain_name = var.use_custom_domain ? "${var.origin_subdomain}.${var.domain_name}" : aws_lb.main.dns_name
     origin_id   = "ALB-${local.name_prefix}"
 
     custom_origin_config {
       http_port                = 80
       https_port               = 443
-      origin_protocol_policy   = "https-only"
+      origin_protocol_policy   = var.use_custom_domain ? "https-only" : "http-only"
       origin_ssl_protocols     = ["TLSv1.2"]
       origin_keepalive_timeout = 60
       origin_read_timeout      = 60
@@ -102,9 +102,10 @@ resource "aws_cloudfront_distribution" "main" {
   ##########################################################################
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.cloudfront.certificate_arn
-    ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.2_2021"
+    cloudfront_default_certificate = !var.use_custom_domain
+    acm_certificate_arn             = var.use_custom_domain ? aws_acm_certificate_validation.cloudfront[0].certificate_arn : null
+    ssl_support_method              = var.use_custom_domain ? "sni-only" : null
+    minimum_protocol_version        = var.use_custom_domain ? "TLSv1.2_2021" : null
   }
 
   ##########################################################################
@@ -138,7 +139,6 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   depends_on = [
-    aws_acm_certificate_validation.cloudfront,
     aws_wafv2_web_acl.main,
     aws_s3_bucket_acl.logs
   ]
