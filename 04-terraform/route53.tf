@@ -20,6 +20,7 @@
 ##############################################################################
 
 resource "aws_route53_zone" "main" {
+  count = var.use_custom_domain ? 1 : 0
   name    = var.domain_name
   comment = "Hosted Zone Escola Tech — NexCloud TCC"
 
@@ -37,6 +38,7 @@ resource "aws_route53_zone" "main" {
 ##############################################################################
 
 resource "aws_route53_health_check" "main" {
+  count = var.use_custom_domain ? 1 : 0
   fqdn              = var.domain_name
   port              = 443
   type              = "HTTPS"
@@ -56,7 +58,8 @@ resource "aws_route53_health_check" "main" {
 
 # Apex (escolatech.com.br) — IPv4
 resource "aws_route53_record" "apex" {
-  zone_id = aws_route53_zone.main.zone_id
+  count = var.use_custom_domain ? 1 : 0
+  zone_id = aws_route53_zone.main[0].zone_id
   name    = var.domain_name
   type    = "A"
 
@@ -69,7 +72,8 @@ resource "aws_route53_record" "apex" {
 
 # Origem do CloudFront — alias para o ALB.
 resource "aws_route53_record" "origin" {
-  zone_id = aws_route53_zone.main.zone_id
+  count = var.use_custom_domain ? 1 : 0
+  zone_id = aws_route53_zone.main[0].zone_id
   name    = "${var.origin_subdomain}.${var.domain_name}"
   type    = "A"
 
@@ -82,7 +86,8 @@ resource "aws_route53_record" "origin" {
 
 # www — IPv4
 resource "aws_route53_record" "www" {
-  zone_id = aws_route53_zone.main.zone_id
+  count = var.use_custom_domain ? 1 : 0
+  zone_id = aws_route53_zone.main[0].zone_id
   name    = "www.${var.domain_name}"
   type    = "A"
 
@@ -95,7 +100,8 @@ resource "aws_route53_record" "www" {
 
 # Apex — IPv6
 resource "aws_route53_record" "apex_aaaa" {
-  zone_id = aws_route53_zone.main.zone_id
+  count = var.use_custom_domain ? 1 : 0
+  zone_id = aws_route53_zone.main[0].zone_id
   name    = var.domain_name
   type    = "AAAA"
 
@@ -108,7 +114,8 @@ resource "aws_route53_record" "apex_aaaa" {
 
 # www — IPv6
 resource "aws_route53_record" "www_aaaa" {
-  zone_id = aws_route53_zone.main.zone_id
+  count = var.use_custom_domain ? 1 : 0
+  zone_id = aws_route53_zone.main[0].zone_id
   name    = "www.${var.domain_name}"
   type    = "AAAA"
 
