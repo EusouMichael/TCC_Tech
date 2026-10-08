@@ -471,3 +471,19 @@ resource "aws_iam_role_policy" "ec2_rds_secret" {
     }]
   })
 }
+
+
+resource "aws_iam_role_policy" "ec2_rds_iam_auth" {
+  name = "${local.name_prefix}-ec2-rds-iam-auth"
+  role = aws_iam_role.ec2_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid      = "ConnectAsApplicationUser"
+      Effect   = "Allow"
+      Action   = ["rds-db:connect"]
+      Resource = "arn:aws:rds-db:${var.aws_region}:${local.account_id}:dbuser:${aws_db_instance.postgres.resource_id}/${var.db_app_username}"
+    }]
+  })
+}
