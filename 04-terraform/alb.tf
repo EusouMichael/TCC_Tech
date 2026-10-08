@@ -82,12 +82,27 @@ resource "aws_lb_listener" "http" {
   port              = "80"
   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
+  dynamic "default_action" {
+    for_each = var.use_custom_domain ? [1] : []
+    content {
+      type = "redirect"
+      redirect {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
+    }
+  }
+
+  dynamic "default_action" {
+    for_each = var.use_custom_domain ? [] : [1]
+    content {
+      type = "fixed-response"
+      fixed_response {
+        content_type = "text/plain"
+        message_body = "Forbidden"
+        status_code  = "403"
+      }
     }
   }
 
@@ -105,6 +120,7 @@ resource "aws_lb_listener" "http" {
 ##############################################################################
 
 resource "aws_lb_listener" "https" {
+  count = var.use_custom_domain ? 1 : 0
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
   protocol          = "HTTPS"
@@ -131,7 +147,7 @@ resource "aws_lb_listener" "https" {
 ##############################################################################
 
 resource "aws_lb_listener_rule" "cloudfront_only" {
-  listener_arn = aws_lb_listener.https.arn
+  listener_arn = var.use_custom_domain ? aws_lb_listener.https[0].arn : aws_lb_listener.http.arn
   priority     = 10
 
   action {
