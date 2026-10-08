@@ -39,7 +39,7 @@ dnf install -y nginx
 
 # ─── 3. Instalar CloudWatch Agent ────────────────────────────────────────────
 echo "--- Instalando CloudWatch Agent ---"
-dnf install -y amazon-cloudwatch-agent
+dnf install -y amazon-cloudwatch-agent nodejs
 
 # ─── 4. Criar estrutura de diretórios ────────────────────────────────────────
 echo "--- Criando diretórios ---"
@@ -69,6 +69,18 @@ server {
         expires     7d;
         add_header  Cache-Control "public, no-transform";
         try_files   $uri =404;
+    }
+
+    # API de cadastro — encaminhada para Node.js local
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 30s;
     }
 
     # Conteúdo principal — serve index.html para qualquer rota não encontrada
@@ -142,6 +154,58 @@ FALLBACK
 fi
 
 chown nginx:nginx "$DEST"
+
+# ─── 7. Instalar e configurar API de cadastro ─────────────────────────────────
+echo "--- Instalando API Escola Tech ---"
+mkdir -p /opt/escolatech-api
+aws s3 cp "s3://${assets_bucket}/api/package.json" /opt/escolatech-api/package.json --region "${aws_region}"
+aws s3 cp "s3://${assets_bucket}/api/server.js" /opt/escolatech-api/server.js --region "${aws_region}"
+
+cd /opt/escolatech-api
+npm install --omit=dev --no-audit --no-fund
+
+echo "--- Obtendo credenciais do RDS via Secrets Manager ---"
+SECRET_ARN=$(aws rds describe-db-instances   --db-instance-identifier "${project_name}-${environment}-postgres"   --region "${aws_region}"   --query 'DBInstances[0].MasterUserSecret.SecretArn'   --output text)
+
+cat > /etc/escolatech-api.env << ENV
+AWS_REGION=${aws_region}
+DB_HOST=${aws_rds_host}
+DB_PORT=5432
+DB_NAME=${db_name}
+DB_SECRET_ARN=${SECRET_ARN}
+ENVIRONMENT=${environment}
+ENV
+
+chmod 600 /etc/escolatech-api.env
+
+cat > /etc/systemd/system/escolatech-api.service << 'SYSTEMD'
+[Unit]
+Description=Escola Tech Enrollment API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/escolatech-api
+EnvironmentFile=/etc/escolatech-api.env
+ExecStart=/usr/bin/node /opt/escolatech-api/server.js
+Restart=always
+RestartSec=5
+User=ec2-user
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/escolatech-api
+
+[Install]
+WantedBy=multi-user.target
+SYSTEMD
+
+chown -R ec2-user:ec2-user /opt/escolatech-api
+systemctl daemon-reload
+systemctl enable escolatech-api
+systemctl start escolatech-api
 
 # ─── 7. Configurar CloudWatch Agent ───────────────────────────────────────────
 # Configuração inline — sem dependência de parâmetro SSM externo
