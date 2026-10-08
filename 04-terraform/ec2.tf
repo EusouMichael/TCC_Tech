@@ -19,6 +19,8 @@ locals {
     project_name     = var.project_name
     environment      = var.environment
     log_group_prefix = "/aws/ec2/${local.name_prefix}"
+    aws_rds_host     = aws_db_instance.postgres.address
+    db_name          = var.db_name
   }))
 }
 
