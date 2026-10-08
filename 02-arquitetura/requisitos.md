@@ -13,14 +13,14 @@
 | R01 | Disponibilidade | Alta disponibilidade — sem ponto único de falha | ALB + ASG + Multi-AZ | ✅ IMPLEMENTADO |
 | R02 | Escalabilidade | Escalonamento automático conforme demanda | Auto Scaling Group | ✅ IMPLEMENTADO |
 | R03 | Segurança | Proteção contra ataques web e DDoS L3/L4 | WAF + Shield Standard | ✅ IMPLEMENTADO |
-| R04 | Segurança | HTTPS ponta-a-ponta para o usuário | ACM + CloudFront + ALB TLS 1.2+ | ✅ IMPLEMENTADO |
+| R04 | Segurança | HTTPS para cliente e origem CloudFront→ALB | ACM + CloudFront + ALB TLS 1.2+ | ✅ IMPLEMENTADO |
 | R05 | DNS | Gerenciamento de DNS com monitoramento | Route 53 + Health Check | ✅ IMPLEMENTADO |
 | R06 | Performance | Redução de latência via CDN | CloudFront | ✅ IMPLEMENTADO |
 | R07 | Armazenamento | Armazenamento confiável para aplicação | EBS gp3 + S3 | ✅ IMPLEMENTADO |
-| R08 | Backup | Backup automatizado com retenção | AWS Backup (EBS) + S3 versioning | ✅ IMPLEMENTADO |
+| R08 | Backup | Backup automatizado com retenção | AWS Backup (EBS) + RDS backup + S3 versioning | ✅ IMPLEMENTADO |
 | R09 | Monitoramento | Monitoramento proativo e alertas | CloudWatch + SNS | ✅ IMPLEMENTADO |
 | R10 | IaC | Infraestrutura como Código versionável | Terraform | ✅ IMPLEMENTADO |
-| R11 | Custo | Custo estimado e defensável | Pay-as-you-go (estimativa ~$156/mês) | ✅ IMPLEMENTADO |
+| R11 | Custo | Custo estimado e defensável | Pay-as-you-go (estimativa ~US$230/mês) | ✅ IMPLEMENTADO |
 | R12 | Segurança de rede | Isolamento de rede com acesso mínimo | VPC + Security Groups + SSM | ✅ IMPLEMENTADO |
 | R13 | Dados | Cadastro persistente de clientes/alunos | RDS PostgreSQL + API Node.js + IAM DB Auth | ✅ IMPLEMENTADO |
 
@@ -154,7 +154,7 @@
 - **S3 Versioning** no bucket de assets: protege contra sobrescrita acidental do index.html, versões antigas expiram em 30 dias
 - **S3 Lifecycle** no bucket de backups: Standard → S3-IA (7d) → Glacier (30d)
 
-**O que não existe:** backup de banco de dados. Este projeto não possui banco de dados — o site é HTML estático servido pelo Nginx. Não há cron job manual — o backup é gerenciado pelo AWS Backup.
+**Banco de dados:** o RDS possui backup automático com retenção de 7 dias e Multi-AZ. Não há cron job manual.
 
 **RPO estimado:** até 24h (frequência do snapshot). **RTO estimado:** depende do tempo de provisionamento de nova instância + restauração de snapshot — não foi medido.
 
@@ -167,7 +167,7 @@
 **Problema:** Sem visibilidade sobre a saúde da aplicação.
 
 **Implementação:**
-- **5 alarmes CloudWatch** com notificação via SNS:
+- **8 alarmes CloudWatch** com notificação via SNS:
   - `cpu-high`: CPU ≥ 70% por 2 minutos
   - `ec2-status-check`: falha de status check
   - `alb-5xx`: erros 5xx ≥ 10/min
