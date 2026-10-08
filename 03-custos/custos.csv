@@ -13,7 +13,7 @@ Seguranca,WAF Requisicoes,1,estimativa,0.00,0.60,7.20,"Estimativa: 1.000.000 req
 DNS,Route 53 Hosted Zone,1,zona,0.50,0.50,6.00,"$0.50/mes por hosted zone."
 DNS,Route 53 Health Check,1,check,0.50,0.50,6.00,"$0.50/mes por health check com measure_latency=true."
 Armazenamento,S3 Standard (3 buckets),1,estimativa,0.00,0.12,1.44,"Estimativa: ~5GB total x $0.023/GB/mes. Valor variavel conforme volume de logs e assets."
-Monitoramento,CloudWatch Alarmes,5,alarmes,0.10,0.50,6.00,"$0.10/alarme/mes x 5 alarmes (cpu_high, ec2_status, alb_5xx, alb_latency, alb_unhealthy + no_healthy = 5 pagos, 1 gratuito)."
+Monitoramento,CloudWatch Alarmes,8,alarmes,0.10,0.80,9.60,"8 alarmes configurados (EC2/ASG, ALB e RDS). Valores podem variar conforme recursos e preços vigentes."
 Monitoramento,CloudWatch Dashboard,1,dashboard,3.00,3.00,36.00,"$3.00/mes por dashboard customizado."
 Monitoramento,CloudWatch Logs ingestao,1,estimativa,0.00,1.50,18.00,"Estimativa: ~3GB/mes de logs Nginx + bootstrap x $0.50/GB."
 Backup,AWS Backup (EBS snapshots),1,estimativa,0.00,1.00,12.00,"Estimativa: snapshots EBS. Valor variavel."
@@ -21,8 +21,8 @@ Banco,RDS PostgreSQL Multi-AZ db.t4g.micro,1,estimativa,0.00,75.00,900.00,"Estim
 Seguranca,ACM Certificados,2,certificados,0.00,0.00,0.00,"Gratuito para certificados associados a servicos AWS (CloudFront e ALB)."
 Seguranca,Shield Standard,1,protecao,0.00,0.00,0.00,"Gratuito. Protege contra DDoS L3/L4 em CloudFront, ALB e Route 53."
 ,,,,,,,
-,TOTAL ESTIMADO MENSAL,,,,$230.02,2760.24,"Estimativa de referencia — valores reais dependem de: trafego, requests, volume de dados, padrao de CPU. Cambio nao incluido aqui — ver nota abaixo."
+,TOTAL ESTIMADO MENSAL,,,,$230.32,2763.84,"Estimativa de referencia — valores reais dependem de: trafego, requests, volume de dados, padrao de CPU. Cambio nao incluido aqui — ver nota abaixo."
 ,,,,,,,
-,NOTA CAMBIO,,,,,,"Para converter para BRL: multiplique o total USD pelo cambio do dia da apresentacao. Exemplo com cambio de R$5.50/USD: $230.02 x 5.50 = R$ 1.265,11/mes. O cambio varia — nao usar valor fixo como fato."
+,NOTA CAMBIO,,,,,,"Para converter para BRL: multiplique o total USD pelo cambio do dia da apresentacao. Exemplo com cambio de R$5.50/USD: $230.32 x 5.50 = R$ 1.266,76/mes. O cambio varia — nao usar valor fixo como fato."
 ,NOTA CPU CREDITS,,,,,,"Instancias t3.small acumulam CPU credits quando CPU fica abaixo do baseline (20% para t3.small). Se a CPU ficar acima do baseline por periodo prolongado, a instancia pode gerar cobranca adicional de surplus credits (~$0.05/vCPU-hora). Para workloads com CPU consistentemente alta, considerar t3a.small ou t3.medium."
 ,NOTA PERIODO,,,,,,"Estimativa para ambiente ativo 24x7 (720h/mes). Em ambiente de TCC/demonstracao, destruir o ambiente apos a apresentacao para evitar custos continuos."
