@@ -125,7 +125,7 @@ resource "aws_lb_listener" "https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = aws_acm_certificate_validation.alb.certificate_arn
+  certificate_arn   = aws_acm_certificate_validation.alb[0].certificate_arn
 
   # Ação padrão: bloquear requisições que NÃO passem pela regra do header
   default_action {
