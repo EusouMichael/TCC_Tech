@@ -74,15 +74,36 @@ provider "aws" {
 
 data "aws_caller_identity" "current" {}
 
-data "aws_canonical_user_id" "current" {}
+# A conta usada no TCC está sujeita a um SCP que bloqueia s3:ListAllMyBuckets.
+# Por isso não usamos data.aws_canonical_user_id, que faz uma chamada ao S3.
+# O bucket de logs usa Object Ownership BucketOwnerEnforced e não depende de ACL.
 
-data "aws_cloudfront_log_delivery_canonical_user_id" "main" {}
+# AMI Amazon Linux 2023 via DescribeImages.
+# Evita dependência do Parameter Store/SSM, que também está bloqueado pelo SCP
+# da conta. O filtro é restrito ao proprietário oficial Amazon e x86_64.
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners      = ["amazon"]
 
-# AMI Amazon Linux 2023 via parâmetro SSM oficial da AWS.
-# Isso garante sempre a AMI mais recente e compatível, sem depender de filtros
-# frágeis por nome. Compatível com x86_64 / HVM / EBS / t3.small.
-data "aws_ssm_parameter" "al2023_ami" {
-  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
 
 ##############################################################################
@@ -92,5 +113,5 @@ data "aws_ssm_parameter" "al2023_ami" {
 locals {
   account_id  = data.aws_caller_identity.current.account_id
   name_prefix = "${var.project_name}-${var.environment}"
-  ami_id      = data.aws_ssm_parameter.al2023_ami.value
+  ami_id      = data.aws_ami.al2023.id
 }
