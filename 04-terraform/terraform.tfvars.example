@@ -39,3 +39,15 @@ asg_cpu_target       = 70
 
 # CloudFront
 cloudfront_price_class = "PriceClass_All"
+
+# RDS PostgreSQL
+db_name                    = "escolatech"
+db_master_username         = "app_admin"
+db_app_username            = "app_user"
+db_instance_class          = "db.t4g.micro"
+db_allocated_storage       = 20
+db_max_allocated_storage   = 50
+db_multi_az                = true
+db_backup_retention_period = 7
+db_deletion_protection     = false
+db_skip_final_snapshot     = true
