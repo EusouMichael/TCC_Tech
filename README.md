@@ -258,7 +258,7 @@ Estimativa de referência para ambiente ativo 24/7, agora incluindo RDS Multi-AZ
 | CloudFront | ~$5 |
 | RDS PostgreSQL Multi-AZ db.t4g.micro + 20 GB | ~$75 |
 | Demais (EBS, S3, CW, R53, Backup) | ~$12 |
-| **Total estimado** | **~$231/mês** |
+| **Total estimado** | **~$230/mês** |
 
 > Valores variáveis dependem de tráfego, requests e volume de dados. Câmbio BRL não fixado — usar cotação do dia. Detalhamento em [`03-custos/estimativa-custos.md`](03-custos/estimativa-custos.md).
 
@@ -297,7 +297,17 @@ curl https://<cloudfront_domain_name>/health
 curl -I https://<alb_dns_name>
 # Esperado: HTTP 403 (sem o header secreto do CloudFront)
 
-# 4. Verificar instâncias no Target Group
+# 4. Verificar API e banco
+curl https://<cloudfront_domain_name>/api/health
+# Esperado: HTTP 200 e {"status":"ok","database":"ok"}
+
+# 5. Testar cadastro
+curl -X POST https://<cloudfront_domain_name>/api/enrollments \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Aluno Teste","email":"teste@example.com","course":"aws","experience":"iniciante","message":"Teste TCC"}'
+# Esperado: HTTP 201 com o ID do cadastro
+
+# 6. Verificar instâncias no Target Group
 aws elbv2 describe-target-health \
   --target-group-arn <target_group_arn> \
   --region sa-east-1
@@ -341,7 +351,8 @@ nexcloud-tcc/
 │   ├── route53.tf               ← DNS + health check
 │   ├── s3.tf                    ← buckets + upload do index.html
 │   ├── monitoring.tf            ← CloudWatch + SNS + AWS Backup
-│   ├── user_data.sh.tpl         ← bootstrap AL2023
+│   ├── user_data.sh.tpl         ← bootstrap AL2023 + API
+│   ├── database.tf              ← RDS PostgreSQL Multi-AZ
 │   └── terraform.tfvars.example ← variáveis de exemplo
 ├── 05-website/
 │   └── index.html               ← site + formulário conectado à API
@@ -363,6 +374,7 @@ O pipeline inicial em `.github/workflows/terraform-check.yml` executa `terraform
 
 ## 19. Limitações
 
+- **Banco:** o primeiro bootstrap cria o usuário da aplicação e a tabela de cadastros usando o usuário master gerenciado pelo RDS; as conexões normais da API usam IAM Database Authentication.
 - **Domínio:** `escolatech.com.br` deve ser registrado e ter name servers delegados para a Hosted Zone do Route 53. Sem isso, usar o output `website_url_cloudfront`.
 - **Terraform CLI:** necessário para `terraform apply`. Versão mínima: 1.5.0. Download: https://developer.hashicorp.com/terraform/install
 - **Credenciais AWS:** conta AWS com permissões para criar os recursos listados.
