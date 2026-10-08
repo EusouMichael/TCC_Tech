@@ -22,6 +22,7 @@
 | R10 | IaC | Infraestrutura como Código versionável | Terraform | ✅ IMPLEMENTADO |
 | R11 | Custo | Custo estimado e defensável | Pay-as-you-go (estimativa ~$156/mês) | ✅ IMPLEMENTADO |
 | R12 | Segurança de rede | Isolamento de rede com acesso mínimo | VPC + Security Groups + SSM | ✅ IMPLEMENTADO |
+| R13 | Dados | Cadastro persistente de clientes/alunos | RDS PostgreSQL + API Node.js + IAM DB Auth | ✅ IMPLEMENTADO |
 
 ---
 
@@ -284,6 +285,11 @@ R11 → 03-custos/estimativa-custos.md
 R12 → vpc.tf (subnets privadas, NAT GW, route tables)
       security.tf (aws_security_group.alb, aws_security_group.ec2)
       vpc.tf (aws_flow_log.main)
+
+R13 → database.tf (RDS PostgreSQL Multi-AZ, privado, criptografado)
+      security.tf (SG RDS + IAM DB Auth)
+      07-api/server.js (API de matrícula e criação do schema)
+      05-website/index.html (POST /api/enrollments)
 ```
 
 ---
